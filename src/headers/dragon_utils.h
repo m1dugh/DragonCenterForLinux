@@ -81,5 +81,34 @@ RCODE 	set_battery_threshold(FILE * handle, unsigned char threshold);
  */
 unsigned char 	get_battery_threshold(FILE * handle);
 
+/**
+ * \struct	pu_temp_t
+ * \brief	Container for temperatures of different processing units.
+ */
+typedef struct {
+	unsigned char 	pu_temp;		/*!< Temperature of the processing unit. */
+	unsigned char*	pu_cores_temp;	/*!< Array containing the temperature of each core. */ 
+	size_t 			pu_cores_count;	/*!< The count of core in the processing unit. */
+} pu_temp_t; 
+
+/**
+ *	\fn	pu_temp_t		get_gpu_temp(FILE * handle, pu_temp_t * temperature)
+ *	\brief 				Fetches the temperature of the gpu and its cores
+ *	\param handle		The file handle for the EC.
+ *	\param temperature	The struct to write the temperatures to. The pu_cores_count is expected.
+ *	\return 			RC_OK if succeeded, RC_FAILED otherwise.
+ */
+RCODE	get_gpu_temp(FILE * handle, pu_temp_t *);
+
+/**
+ *	\fn	pu_temp_t		get_cpu_temp(FILE * handle, pu_temp_t * temperature)
+ *	\brief 				Fetches the temperature of the cpu and its cores
+ *	\param handle		The file handle for the EC.
+ *	\param temperature	The struct to write the temperatures to. The pu_cores_count is expected.
+ *	\return 			RC_OK if succeeded, RC_FAILED otherwise.
+ */
+RCODE	get_cpu_temp(FILE * handle, pu_temp_t *);
+
+
 
 #endif

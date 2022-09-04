@@ -7,7 +7,7 @@
 int main(int argc, char ** argv) {
 	FILE * handle = open_ec();
 
-	RCODE result = set_battery_threshold(handle, 50);
+	RCODE result = set_battery_threshold(handle, 100);
 	printf("result is %d\n", result);
 
 	close_ec(handle);
