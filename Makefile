@@ -7,7 +7,7 @@ LFLAGS=
 BINDIR=./bin
 TARGET=$(BINDIR)/DragonCenter2
 SRCDIR=./src
-SOURCES=main.c source/file_utils.c
+SOURCES=main.c source/file_utils.c source/dragon_utils.c
 OBJDIR=./obj
 OBJS=$(addprefix $(OBJDIR)/, $(SOURCES:.c=.o))
 
@@ -28,8 +28,10 @@ $(TARGET): $(OBJS)
 build: $(OBJS)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
-	@mkdir -p $(OBJDIR)
+	@mkdir -p $(shell echo $@ | grep -Eo "(\w+/)+")
+	@# vim color scheme debug "
 	$(CC) $(CFLAGS) $< -o $@
+
 	
 clean:
 	rm -rf $(OBJDIR)
