@@ -1,0 +1,9 @@
+# the vim workspace file
+*.vim
+
+# binaries
+obj
+bin/
+*.o
+*.a
+
