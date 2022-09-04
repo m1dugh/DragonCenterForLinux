@@ -30,7 +30,7 @@ FILE * 	open_ec();
  * \param length 	The length of the value array
  * \return 			0 if succeeded, another RCODE else
  */
-RCODE write_ec(FILE* handle, int key, unsigned char* value, int length);
+RCODE write_ec(FILE* handle, int key, unsigned char* value, size_t length);
 
 /**
  * \fn	RCODE	read_ec(FILE* handle, int key, unsigned char* value, int lenght)
@@ -41,7 +41,7 @@ RCODE write_ec(FILE* handle, int key, unsigned char* value, int length);
  * \param length	The number of bytes to read at the given position
  *
  */
-RCODE read_ec(FILE* handle, int key, unsigned char* value, int length);
+RCODE read_ec(FILE* handle, int key, unsigned char* value, size_t length);
 
 /**
  * \fn RCODE close_ec(FILE *f)

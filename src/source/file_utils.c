@@ -27,7 +27,7 @@ RCODE close_ec(FILE * handle) {
 }
 
 
-RCODE write_ec(FILE * handle, int key, unsigned char * value, int length) {
+RCODE write_ec(FILE * handle, int key, unsigned char * value, size_t length) {
 	if(handle == NULL) {
 		ERROR("write_ec", "handle is NULL");
 		return RC_FAILED;
@@ -41,12 +41,38 @@ RCODE write_ec(FILE * handle, int key, unsigned char * value, int length) {
 		return RC_FAILED;
 	}
 
-	fwrite(value, length * sizeof(char), 1, handle);
+	size_t written = fwrite(value, length * sizeof(char), 1, handle);
+	if(written < length) {
+		ERROR("write_ec", "fwrite: an error occured while reading");
+		return RC_FAILED;
+	}
 
 	return RC_OK;
 	
 }
 
+RCODE read_ec(FILE * handle, int key, unsigned char * value, size_t length) {
+	if(handle == NULL) {
+		ERROR("read_ec", "handle is NULL");
+		return RC_FAILED;
+	}
 
+	int result;
+	if((result = fseek(handle, key, SEEK_SET)) != 0) {
+		char * err_msg = (char*) malloc(32 * sizeof(char));
+		sprintf(err_msg, "fseek failed: returned %d", result);
+		ERROR("read_ec", err_msg);
+		return RC_FAILED;
+	}
+
+	size_t read_bytes = fread(value, length * sizeof(char), 1, handle);
+	if(read_bytes < length) {
+		ERROR("read_ec", "fread: an error occured while reading");
+		return RC_FAILED;
+	}
+
+	return RC_OK;
+
+}
 
 
