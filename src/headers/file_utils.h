@@ -22,7 +22,7 @@ FILE * 	open_ec();
 
 
 /**
- * \fn RCODE 	write_ec(int key, unsigned char *)
+ * \fn RCODE 	write_ec(FILE * handle, int key, unsigned char *, int length)
  * \brief 			Writes the byte array at the offset given by key
  * \param handle	The file handle to the EC file
  * \param key 		The offset at which to write the byte array
@@ -31,6 +31,17 @@ FILE * 	open_ec();
  * \return 			0 if succeeded, another RCODE else
  */
 RCODE write_ec(FILE* handle, int key, unsigned char* value, int length);
+
+/**
+ * \fn	RCODE	read_ec(FILE* handle, int key, unsigned char* value, int lenght)
+ * \brief	 		Reads the EC for the number of bytes required for field key
+ * \param handle	The handle of the FILE EC
+ * \param key		The offset for the reading
+ * \param value		The pointer to the array to write on
+ * \param length	The number of bytes to read at the given position
+ *
+ */
+RCODE read_ec(FILE* handle, int key, unsigned char* value, int length);
 
 /**
  * \fn RCODE close_ec(FILE *f)
