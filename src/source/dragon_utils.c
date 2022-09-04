@@ -12,7 +12,9 @@ RCODE	set_battery_threshold(FILE * handle, unsigned char threshold) {
 	unsigned char effective_threshold = 0x80 + threshold;
 	unsigned char * value = (unsigned char *)malloc(sizeof(char));
 	*value = effective_threshold;
-	return write_ec(handle, BATTERY_THRESHOLD, value, 1);
+	RCODE res = write_ec(handle, BATTERY_THRESHOLD, value, 1);
+	free(value);
+	return res;
 }
 
 

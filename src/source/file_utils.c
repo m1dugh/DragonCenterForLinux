@@ -38,6 +38,7 @@ RCODE write_ec(FILE * handle, int key, unsigned char * value, size_t length) {
 		char * err_msg = (char*) malloc(32 * sizeof(char));
 		sprintf(err_msg, "fseek failed: returned %d", result);
 		ERROR("write_ec", err_msg);
+		free(err_msg);
 		return RC_FAILED;
 	}
 
@@ -62,6 +63,7 @@ RCODE read_ec(FILE * handle, int key, unsigned char * value, size_t length) {
 		char * err_msg = (char*) malloc(32 * sizeof(char));
 		sprintf(err_msg, "fseek failed: returned %d", result);
 		ERROR("read_ec", err_msg);
+		free(err_msg);
 		return RC_FAILED;
 	}
 
