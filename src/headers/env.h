@@ -4,7 +4,7 @@
 // definitions for embedded controller registers
 #define EC_FILE "/sys/kernel/debug/ec/ec0/io"
 
-#define BATTERY_THRESOLD 0xEF
+#define BATTERY_THRESHOLD 0xEF
 
 #define CPU_TEMP 0x68
 #define CPU1_TEMP 0x6A

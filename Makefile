@@ -7,7 +7,7 @@ LFLAGS=
 BINDIR=./bin
 TARGET=$(BINDIR)/DragonCenter2
 SRCDIR=./src
-SOURCES=main.c
+SOURCES=main.c source/file_utils.c
 OBJDIR=./obj
 OBJS=$(addprefix $(OBJDIR)/, $(SOURCES:.c=.o))
 
