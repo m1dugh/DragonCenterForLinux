@@ -1,6 +1,7 @@
 #ifndef DG2_ENV	
 #define DG2_ENV
 
+// definitions for embedded controller registers
 #define EC_FILE "/sys/kernel/debug/ec/ec0/io"
 
 #define BATTERY_THRESOLD 0xEF
@@ -30,5 +31,12 @@
 #define FAN_MODE_ADVANCED 0x8C
 #define FAN_MODE_BASIC 0x4C
 #define FAN_MODE_AUTO 0xC
+
+// type definitions
+
+typedef char RCODE;
+
+#define RC_OK 0
+#define RC_FAILED -1
 
 #endif
