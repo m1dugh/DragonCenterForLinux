@@ -46,22 +46,22 @@ RCODE	set_cooler_boost(FILE * handle, int value);
 int 	get_coolet_boost(FILE * handle);
 
 /**
- * \fn RCODE 		set_mode(FILE * handle, int mode)
+ * \fn RCODE 		set_mode(FILE * handle, unsigned char mode)
  * \brief			Sets the mode for the power.
  * \param handle	The file handle for EC.
  * \param mode		The mode to set, FAN_MODE_ADVANCED, FAN_MODE_BASIC, FAN_MODE_AUTO. 
  * \return			RC_OK id succeeded, RC_FAILED otherwise.
  *
  */
-RCODE	set_mode(FILE * handle, int mode);
+RCODE	set_mode(FILE * handle, unsigned char mode);
 
 /**
- * \fn int			get_mode(FILE * handle)
- * \brief			Fetches the power mode of the embedded controller.
- * \param handle	The file handle for the EC.
- * \return 			The mode, -1 if failed.
+ * \fn unsigned char	get_mode(FILE * handle)
+ * \brief				Fetches the power mode of the embedded controller.
+ * \param handle		The file handle for the EC.
+ * \return 				The mode, -1 if failed.
  */
-int 	get_mode(FILE * handle);
+unsigned char 	get_mode(FILE * handle);
 
 /**
  * \fn RCODE 		set_battery_threshold(FILE * handle, int mode)

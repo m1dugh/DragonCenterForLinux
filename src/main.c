@@ -9,6 +9,8 @@ int main(int argc, char ** argv) {
 
 	unsigned char bt = get_battery_threshold(handle);
 	printf("result is %d\n", bt);
+	printf("mode is %d\n", get_mode(handle));
+	set_mode(handle, FAN_MODE_ADVANCED);
 
 	close_ec(handle);
 	return 0;
