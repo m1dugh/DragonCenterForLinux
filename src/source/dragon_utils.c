@@ -17,4 +17,11 @@ RCODE	set_battery_threshold(FILE * handle, unsigned char threshold) {
 	return res;
 }
 
+unsigned char get_battery_threshold(FILE * handle) {
+	unsigned char value;
+	RCODE res = read_ec(handle, BATTERY_THRESHOLD, &value, 1);
+	if(res != RC_OK) 
+		return -1;
+	return value - 0x80;
+}
 
