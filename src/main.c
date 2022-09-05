@@ -12,6 +12,10 @@ int main(int argc, char ** argv) {
 	printf("mode is %d\n", get_mode(handle));
 	set_mode(handle, FAN_MODE_ADVANCED);
 
+	bt = get_cooler_boost(handle);
+	double pr = ((double)bt)/((double)0x80);
+	printf("cooler boost: %f\n", pr);
+
 	close_ec(handle);
 	return 0;
 }

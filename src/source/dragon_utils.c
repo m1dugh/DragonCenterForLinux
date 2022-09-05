@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 
-#define ERROR(function, message) fprintf(stderr, "%s, %s\n", function, message);
+#define ERROR(function, message) fprintf(stderr, "%s: %s\n", function, message);
 
 RCODE	set_battery_threshold(FILE * handle, unsigned char threshold) {
 	if(threshold > 100)
@@ -30,7 +30,8 @@ unsigned char get_battery_threshold(FILE * handle) {
 RCODE set_mode(FILE * handle, unsigned char mode) {
 	if(mode != FAN_MODE_ADVANCED &&
 			mode!= FAN_MODE_BASIC &&
-			mode != FAN_MODE_AUTO) {
+			mode != FAN_MODE_AUTO &&
+			mode != FAN_MODE_CURRENT) {
 		ERROR("set_mode", "provided mode is not allowed");
 		return RC_FAILED;
 	}
@@ -48,5 +49,26 @@ unsigned char get_mode(FILE * handle) {
 	}
 
 	return result;
+}
+
+RCODE set_cooler_boost(FILE * handle, unsigned char value) {
+	if(value > 0x80)
+		value = 0x80;
+	if(write_ec(handle, COOLER_BOOST, &value, 1) != RC_OK) {
+		ERROR("set_cooler_boost", "write_ec: an error occured");
+		return RC_FAILED;
+	}
+
+	return RC_OK;
+}
+
+unsigned char get_cooler_boost(FILE * handle) {
+	unsigned char value;
+	if(read_ec(handle, COOLER_BOOST, &value, 1)) {
+		ERROR("get_cooler_boost", "error in read_ec");
+		return -1;
+	}
+
+	return value;
 }
 

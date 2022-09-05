@@ -28,22 +28,22 @@ RCODE 	set_fan_rpm(FILE * handle, int fan, int rpm);
 int 	get_fan_rpm(FILE * handle, int fan);
 
 /**
- * \fn RCODE 		set_cooler_boost(FILE * handle, int value)
+ * \fn RCODE 		set_cooler_boost(FILE * handle, unsigned char value)
  * \brief			Sets the rpm for the cooler boost fan.
  * \param handle	The file handle for ec
  * \param value		The value to set for the fan, 0x00 -> 0x80.
  * \return			RC_OK id succeeded, RC_FAILED otherwise.
  *
  */
-RCODE	set_cooler_boost(FILE * handle, int value);
+RCODE	set_cooler_boost(FILE * handle, unsigned char value);
 
 /**
- * \fn int			get_cooler_boost(FILE * handle)
- * \brief			Fetches the rpm for the cooler boost fan.
- * \param handle	The file handle for the EC.
- * \return 			The fan RPM, -1 if failed.
+ * \fn unsigned char	get_cooler_boost(FILE * handle)
+ * \brief				Fetches the rpm for the cooler boost fan.
+ * \param handle		The file handle for the EC.
+ * \return 				The fan RPM, -1 if failed.
  */
-int 	get_coolet_boost(FILE * handle);
+unsigned char 	get_cooler_boost(FILE * handle);
 
 /**
  * \fn RCODE 		set_mode(FILE * handle, unsigned char mode)

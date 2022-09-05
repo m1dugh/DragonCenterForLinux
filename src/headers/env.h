@@ -31,6 +31,7 @@
 #define FAN_MODE_ADVANCED 0x8C
 #define FAN_MODE_BASIC 0x4C
 #define FAN_MODE_AUTO 0xC
+#define FAN_MODE_CURRENT 0x0
 
 // type definitions
 
