@@ -7,14 +7,9 @@
 int main(int argc, char ** argv) {
 	FILE * handle = open_ec();
 
-	unsigned char bt = get_battery_threshold(handle);
-	printf("result is %d\n", bt);
-	printf("mode is %d\n", get_mode(handle));
-	set_mode(handle, FAN_MODE_ADVANCED);
-
-	bt = get_cooler_boost(handle);
-	double pr = ((double)bt)/((double)0x80);
-	printf("cooler boost: %f\n", pr);
+	// unsigned short rpm = get_fan_rpm(handle, GPU_FAN);
+	// printf("rpm: %d\n", rpm);
+	printf("cpu temp: %d\n", get_cpu_temp(handle));
 
 	close_ec(handle);
 	return 0;

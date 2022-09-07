@@ -64,11 +64,33 @@ RCODE set_cooler_boost(FILE * handle, unsigned char value) {
 
 unsigned char get_cooler_boost(FILE * handle) {
 	unsigned char value;
-	if(read_ec(handle, COOLER_BOOST, &value, 1)) {
+	if(read_ec(handle, COOLER_BOOST, &value, 1) != RC_OK) {
 		ERROR("get_cooler_boost", "error in read_ec");
 		return -1;
 	}
 
 	return value;
+}
+
+
+uint8_t get_gpu_temp(FILE * handle) {
+	uint8_t result;
+	if(read_ec(handle, GPU_TEMP, &result, 1) != RC_OK) {
+		ERROR("get_gpu_temp", "error in read_ec");
+		return -1;
+	}
+
+	return result;
+}
+
+
+uint8_t get_cpu_temp(FILE * handle) {
+	uint8_t result;
+	if(read_ec(handle, CPU_TEMP, &result, 1) != RC_OK) {
+		ERROR("get_cpu_temp", "error in read_ec");
+		return -1;
+	}
+
+	return result;
 }
 

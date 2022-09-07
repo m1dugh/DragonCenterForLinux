@@ -1,6 +1,8 @@
 #ifndef DG2_ENV	
 #define DG2_ENV
 
+#include <stdint.h>
+
 // definitions for embedded controller registers
 #define EC_FILE "/sys/kernel/debug/ec/ec0/io"
 

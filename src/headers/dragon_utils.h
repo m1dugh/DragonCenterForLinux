@@ -7,25 +7,6 @@
 #include "env.h"
 #include <stdio.h>
 
-/**
- * \fn RCODE 	set_fan_rpm(FILE * handle, int fan_id, int rpm)
- * \brief	sets the rpm for the specified fans
- * \param handle	The file handle for ec
- * \param fan_id	The fan id
- * \param rpm		The RPM to set for the fan
- * \return			RC_OK id succeeded, RC_FAILED otherwise.
- *
- */
-RCODE 	set_fan_rpm(FILE * handle, int fan, int rpm);
-
-/**
- * \fn int	get_fan_rpm(FILE * handle, int fan_id)
- * \brief	fetches the rpm for the given fan
- * \param handle	The file handle for the EC.
- * \param fan_id	The id of the fan.
- * \return 			The fan RPM, -1 if failed.
- */
-int 	get_fan_rpm(FILE * handle, int fan);
 
 /**
  * \fn RCODE 		set_cooler_boost(FILE * handle, unsigned char value)
@@ -81,33 +62,44 @@ RCODE 	set_battery_threshold(FILE * handle, unsigned char threshold);
  */
 unsigned char 	get_battery_threshold(FILE * handle);
 
+
 /**
- * \struct	pu_temp_t
- * \brief	Container for temperatures of different processing units.
+ *	\struct		temp_mapper_t
+ *	\brief		Double array containing mapping for the fans based on given temperature.
+ *
  */
 typedef struct {
-	unsigned char 	pu_temp;		/*!< Temperature of the processing unit. */
-	unsigned char*	pu_cores_temp;	/*!< Array containing the temperature of each core. */ 
-	size_t 			pu_cores_count;	/*!< The count of core in the processing unit. */
-} pu_temp_t; 
+	uint8_t * temps;
+	uint8_t * fan_powers;
+} temp_mapper_t;
 
 /**
- *	\fn	pu_temp_t		get_gpu_temp(FILE * handle, pu_temp_t * temperature)
+ * \fn RCODE 		set_fan_rpm(FILE * handle, int fan_id, temp_mapper_t mapper)
+ * \brief			sets the rpm for the specified fans
+ * \param handle	The file handle for ec
+ * \param fan_id	The fan id
+ * \param rpm		The RPM to set for the fan
+ * \return			RC_OK id succeeded, RC_FAILED otherwise.
+ *
+ */
+RCODE 	set_fan_mapping(FILE * handle, int fan, temp_mapper_t mapper);
+
+
+/**
+ *	\fn	pu_temp_t		get_gpu_temp(FILE * handle)
  *	\brief 				Fetches the temperature of the gpu and its cores
  *	\param handle		The file handle for the EC.
- *	\param temperature	The struct to write the temperatures to. The pu_cores_count is expected.
- *	\return 			RC_OK if succeeded, RC_FAILED otherwise.
+ *	\return 			The temperature of the gpu
  */
-RCODE	get_gpu_temp(FILE * handle, pu_temp_t *);
+uint8_t	get_gpu_temp(FILE * handle);
 
 /**
- *	\fn	pu_temp_t		get_cpu_temp(FILE * handle, pu_temp_t * temperature)
+ *	\fn	pu_temp_t		get_cpu_temp(FILE * handle)
  *	\brief 				Fetches the temperature of the cpu and its cores
  *	\param handle		The file handle for the EC.
- *	\param temperature	The struct to write the temperatures to. The pu_cores_count is expected.
- *	\return 			RC_OK if succeeded, RC_FAILED otherwise.
+ *	\return 			The temperature of the cpu
  */
-RCODE	get_cpu_temp(FILE * handle, pu_temp_t *);
+uint8_t	get_cpu_temp(FILE * handle);
 
 
 
