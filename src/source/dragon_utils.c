@@ -94,3 +94,38 @@ uint8_t get_cpu_temp(FILE * handle) {
 	return result;
 }
 
+RCODE set_fan_mapping(FILE * handle, int fan, temp_mapper_t mapper) {
+	size_t fan_count, temp_count;
+	size_t temp_start_address, fan_start_address;
+	if(fan == GPU_FAN) {
+		fan_count = 7;
+		temp_count = 6;
+		temp_start_address = GPU1_TEMP;
+		fan_start_address = GPU_FAN_ADDR;
+	} else if (fan == CPU_FAN) {
+		fan_count = 6;
+		temp_count = 6;
+		temp_start_address = CPU1_TEMP;
+		fan_start_address = CPU_FAN_ADDR;
+	} else {
+		ERROR("set_fan_mapping", "invalid fan id");
+		return RC_FAILED;
+	}
+
+	if(write_ec(handler, temp_start_address, mapper.temps, temp_count) != RC_OK) {
+		ERROR("set_fan_mapping", "error when setting temp addresses");
+		return RC_FAILED;
+	}
+
+
+	if(write_ec(handler, fan_start_address, mapper.fan_powers, fan_count) != RC_OK) {
+		ERROR("set_fan_mapping", "error when setting fan values");
+		return RC_FAILED;
+	}
+
+
+	return RC_OK;
+
+}
+
+
