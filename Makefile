@@ -1,8 +1,8 @@
 CC=gcc
-CFLAGS=-g -Wall -c
+CFLAGS=`pkg-config --cflags gtk4` -g -Wall -c
 
 LD=gcc
-LFLAGS=`pkg-config --cflags --libs gtk+-2.0`
+LDFLAGS=`pkg-config --libs gtk4`
 
 BINDIR=./bin
 TARGET=$(BINDIR)/DragonCenter2
@@ -22,7 +22,7 @@ run: $(TARGET)
 
 $(TARGET): $(OBJS)
 	@mkdir -p $(BINDIR)
-	$(LD) $(LDFLAGS) $^ -o $@
+	$(LD)  $^ -o $@ $(LDFLAGS)
 
 
 build: $(OBJS)
