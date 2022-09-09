@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-g -Wall -c
 
 LD=gcc
-LFLAGS=
+LFLAGS=`pkg-config --cflags --libs gtk+-2.0`
 
 BINDIR=./bin
 TARGET=$(BINDIR)/DragonCenter2

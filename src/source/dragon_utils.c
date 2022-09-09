@@ -112,13 +112,13 @@ RCODE set_fan_mapping(FILE * handle, int fan, temp_mapper_t mapper) {
 		return RC_FAILED;
 	}
 
-	if(write_ec(handler, temp_start_address, mapper.temps, temp_count) != RC_OK) {
+	if(write_ec(handle, temp_start_address, mapper.temps, temp_count) != RC_OK) {
 		ERROR("set_fan_mapping", "error when setting temp addresses");
 		return RC_FAILED;
 	}
 
 
-	if(write_ec(handler, fan_start_address, mapper.fan_powers, fan_count) != RC_OK) {
+	if(write_ec(handle, fan_start_address, mapper.fan_powers, fan_count) != RC_OK) {
 		ERROR("set_fan_mapping", "error when setting fan values");
 		return RC_FAILED;
 	}

@@ -10,6 +10,7 @@ int main(int argc, char ** argv) {
 	// unsigned short rpm = get_fan_rpm(handle, GPU_FAN);
 	// printf("rpm: %d\n", rpm);
 	printf("cpu temp: %d\n", get_cpu_temp(handle));
+	set_cooler_boost(handle, 0x02);
 
 	close_ec(handle);
 	return 0;
