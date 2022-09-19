@@ -29,12 +29,6 @@ static void activate (GtkApplication *app, gpointer user_data) {
 
 int main(int argc, char ** argv) {
 
-	FILE * handle = open_ec();
-
-	set_battery_threshold(handle, 50);
-
-	close_ec(handle);
-	
 	GtkApplication *app;
 	int status;
 
