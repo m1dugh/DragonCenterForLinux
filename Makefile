@@ -1,8 +1,8 @@
 CC=gcc
-CFLAGS=`pkg-config --cflags gtk4` -g -Wall -c
+CFLAGS=`pkg-config --cflags gtk+-3.0` -g -Wall -c
 
 LD=gcc
-LDFLAGS=`pkg-config --libs gtk4`
+LDFLAGS=`pkg-config --libs gtk+-3.0` -rdynamic
 
 BINDIR=./bin
 TARGET=$(BINDIR)/DragonCenter2

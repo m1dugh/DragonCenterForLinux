@@ -6,39 +6,33 @@
 #include <gtk/gtk.h>
 
 
-static void print_hello(GtkWidget *widget, gpointer user_data) {
-	g_print("Hello, World!\n");
-}
-
-static void activate (GtkApplication *app, gpointer user_data) {
-	GtkWidget *window;
-	GtkWidget *button;
-
-	window = gtk_application_window_new(app);
-	gtk_window_set_title(GTK_WINDOW(window), "window");
-	gtk_window_set_default_size(GTK_WINDOW(window), 200, 200);
-
-	button = gtk_button_new_with_label("Hello, World!\n");
-	g_signal_connect(button, "clicked", G_CALLBACK(print_hello), NULL);
-	gtk_window_set_child(GTK_WINDOW(window), button);
-
-	gtk_window_present(GTK_WINDOW(window));
-
-}
-
-
 int main(int argc, char ** argv) {
+    /* FILE* handle = open_ec();
 
-	GtkApplication *app;
-	int status;
+    set_battery_threshold(handle, 100);
+    set_cooler_boost(handle, 0x0);
 
-	app = gtk_application_new("com.example", G_APPLICATION_FLAGS_NONE);
-	g_signal_connect(app, "activate", G_CALLBACK(activate), NULL);
-	status = g_application_run(G_APPLICATION(app), argc, argv);
-	g_object_unref(app);
+    close_ec(handle);*/
 
+    GtkBuilder* builder;
+    GtkWidget*  window;
 
-	return status;
+    gtk_init(&argc, &argv);
+
+    builder = gtk_builder_new_from_file("./frames/Window.glade");
+
+    window = GTK_WIDGET(gtk_builder_get_object(builder, "window_main"));
+    gtk_builder_connect_signals(builder, NULL);
+
+    g_object_unref(builder);
+
+    gtk_widget_show(window);
+    gtk_main();
+    return 0;
 }
 
-
+void on_window_main_destroy()
+{
+    gtk_main_quit();
+    printf("test\n");
+}

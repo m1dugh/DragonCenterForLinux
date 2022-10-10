@@ -7,3 +7,6 @@ bin/
 *.o
 *.a
 
+# temp files
+.glade~
+
