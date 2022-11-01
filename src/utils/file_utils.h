@@ -9,7 +9,7 @@
 #ifndef DG2_FUTILS
 #define DG2_FUTILS
 
-#include "env.h"
+#include "../env.h"
 
 #include <stdio.h>
 

@@ -4,7 +4,7 @@
 #define GPU_FAN 0
 #define CPU_FAN 1
 
-#include "env.h"
+#include "../env.h"
 #include <stdio.h>
 
 

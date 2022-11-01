@@ -21,8 +21,9 @@
         <property name="visible">True</property>
         <property name="can-focus">True</property>
         <property name="orientation">vertical</property>
-        <property name="position">400</property>
+        <property name="position">500</property>
         <property name="position-set">True</property>
+        <property name="wide-handle">True</property>
         <child>
           <object class="GtkStack">
             <property name="visible">True</property>

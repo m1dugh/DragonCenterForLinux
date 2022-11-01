@@ -1,6 +1,6 @@
-#include "../headers/dragon_utils.h"
+#include "./dragon_utils.h"
 
-#include "../headers/file_utils.h"
+#include "../utils/file_utils.h"
 #include <malloc.h>
 #include <stdio.h>
 
@@ -127,5 +127,4 @@ RCODE set_fan_mapping(FILE * handle, int fan, temp_mapper_t mapper) {
 	return RC_OK;
 
 }
-
 

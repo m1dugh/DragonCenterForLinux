@@ -7,7 +7,7 @@ LDFLAGS=`pkg-config --libs gtk+-3.0` -rdynamic
 BINDIR=./bin
 TARGET=$(BINDIR)/DragonCenter2
 SRCDIR=./src
-SOURCES=main.c source/file_utils.c source/dragon_utils.c
+SOURCES=main.c utils/file_utils.c dragon_utils/dragon_utils.c
 OBJDIR=./obj
 OBJS=$(addprefix $(OBJDIR)/, $(SOURCES:.c=.o))
 

@@ -1,5 +1,5 @@
-#include "../headers/file_utils.h"
-#include "../headers/env.h"
+#include "./file_utils.h"
+#include "../env.h"
 
 #include <malloc.h>
 
