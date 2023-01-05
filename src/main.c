@@ -1,6 +1,6 @@
-#include "headers/env.h"
-#include "headers/file_utils.h"
-#include "headers/dragon_utils.h"
+#include "env.h"
+#include "utils/file_utils.h"
+#include "dragon_utils/dragon_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <gtk/gtk.h>
