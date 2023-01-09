@@ -6,6 +6,7 @@ obj
 bin/
 *.o
 *.a
+result
 
 # temp files
 .glade~

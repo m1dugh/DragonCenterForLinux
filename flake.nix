@@ -40,12 +40,9 @@
                 src = ./.;
 
                 nativeBuildInputs = with pkgs; [
-                    gdb
                     gnumake
                     gcc
                     pkg-config
-                    glade
-                    clang-tools
                 ];
 
                 buildInputs = with pkgs; [
