@@ -15,50 +15,73 @@
         pkgs = nixpkgs.legacyPackages.${system};
     in {
 
-        devShells.${system}.default = pkgs.mkShell {
+        devShells.${system}={
 
-            nativeBuildInputs = with pkgs; [
-                gdb
-                gnumake
-                gcc
-                pkg-config
-                glade
-                clang-tools
-            ];
+            default = pkgs.mkShell {
 
-            buildInputs = with pkgs; [
-                glib
-                gtk3
-            ];
+                nativeBuildInputs = with pkgs; [
+                    gdb
+                    gnumake
+                    gcc
+                    pkg-config
+                    glade
+                    clang-tools
+                ];
+
+                buildInputs = with pkgs; [
+                    glib
+                    gtk3
+                ];
+            };
+
+            test-install = pkgs.mkShell {
+                nativeBuildInputs = with self.packages.${system}; [
+                    dragon-center2
+                ];
+            };
         };
-        
+
         packages.${system} = {
-            
+
             dragon-center2 = pkgs.stdenv.mkDerivation {
-                
-                name = "dragon-center2";
+
+                name = "DragonCenter";
                 src = ./.;
 
                 nativeBuildInputs = with pkgs; [
                     gnumake
-                    gcc
-                    pkg-config
+                        gcc
+                        pkg-config
                 ];
 
                 buildInputs = with pkgs; [
-                    makeWrapper
                     glib
-                    gtk3
+                        gtk3
                 ];
 
-                buildPhase = ''
+                configurePhase = ''
                     mkdir -p $out/bin
+                    '';
+
+                buildPhase = ''
                     make
                     '';
+
                 installPhase = ''
-                    cp ./bin/DragonCenter2 $out/bin/
+                    cp -r ./resources "$out/"
+                    install -D ./bin/DragonCenter2 -m 0555 "$out/bin/$name"
                     '';
             };
+
+            default = self.packages.${system}.dragon-center2;
+        };
+
+        apps.${system}.default = 
+            let
+            mypkgs = self.packages.${system};
+        in {
+            type = "app";
+            program = "${mypkgs.default}/bin/DragonCenter";
         };
 
     };
