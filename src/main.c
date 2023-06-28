@@ -9,14 +9,12 @@
 
 
 int main(int argc, char ** argv) {
-    /*FILE* handle = open_ec();
+    FILE* handle = open_ec();
 
-    set_battery_threshold(handle, 50);
-    set_cooler_boost(handle, 0x0);
+    set_battery_threshold(handle, 100);
+    set_cooler_boost(handle, COOLER_BOOST_OFF);
 
-    close_ec(handle);*/
-
-    printf("%s\n", argv[0]);
+    close_ec(handle);
 
     GtkBuilder* builder;
     GtkWidget*  window;
@@ -38,5 +36,4 @@ int main(int argc, char ** argv) {
 void on_window_main_destroy()
 {
     gtk_main_quit();
-    printf("test\n");
 }

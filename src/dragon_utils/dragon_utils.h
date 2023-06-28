@@ -7,6 +7,8 @@
 #include "../env.h"
 #include <stdio.h>
 
+#define COOLER_BOOST_ON 0x80
+#define COOLER_BOOST_OFF 0x0
 
 /**
  * \fn RCODE 		set_cooler_boost(FILE * handle, unsigned char value)
