@@ -11,10 +11,6 @@
 int main(int argc, char ** argv) {
     FILE* handle = open_ec();
 
-    set_battery_threshold(handle, 100);
-    set_cooler_boost(handle, COOLER_BOOST_OFF);
-
-    close_ec(handle);
 
     GtkBuilder* builder;
     GtkWidget*  window;
@@ -30,6 +26,8 @@ int main(int argc, char ** argv) {
 
     gtk_widget_show(window);
     gtk_main();
+
+    close_ec(handle);
     return 0;
 }
 

@@ -32,17 +32,15 @@
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="orientation">vertical</property>
+                <property name="homogeneous">True</property>
                 <child>
-                  <object class="GtkScale">
+                  <object class="GtkRadioButton" id="battery_radio_1">
+                    <property name="label" translatable="yes">best for battery</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
-                    <property name="adjustment">adjustment1</property>
-                    <property name="show-fill-level">True</property>
-                    <property name="fill-level">100</property>
-                    <property name="round-digits">1</property>
-                    <property name="digits">0</property>
-                    <property name="value-pos">left</property>
+                    <property name="receives-default">False</property>
+                    <property name="draw-indicator">True</property>
+                    <property name="group">battery_button_2</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -50,17 +48,41 @@
                     <property name="position">0</property>
                   </packing>
                 </child>
+                <child>
+                  <object class="GtkRadioButton" id="battery_button_2">
+                    <property name="label" translatable="yes">mixed</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="draw-indicator">True</property>
+                    <property name="group">battery_radio_1</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkRadioButton" id="battery_button_3">
+                    <property name="label" translatable="yes">best for mobility</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="draw-indicator">True</property>
+                    <property name="group">battery_radio_1</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="name">page0</property>
                 <property name="title" translatable="yes">page0</property>
               </packing>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
             </child>
           </object>
           <packing>
