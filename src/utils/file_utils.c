@@ -2,6 +2,7 @@
 #include "../env.h"
 
 #include <malloc.h>
+#include <stdio.h>
 
 
 #define ERROR(function, message) fprintf(stderr, "%s: %s\n", function, message);
@@ -47,6 +48,7 @@ RCODE write_ec(FILE * handle, int key, unsigned char * value, size_t length) {
 		ERROR("write_ec", "fwrite: an error occured while reading");
 		return RC_FAILED;
 	}
+    fflush(handle);
 
 	return RC_OK;
 	

@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 
-#define ERROR(function, message) fprintf(stderr, "%s: %s\n", function, message);
+#define ERROR(function, message, rc) fprintf(stderr, "%s: %s\n", function, message); return rc;
 
 RCODE	set_battery_threshold(FILE * handle, unsigned char threshold) {
 	if(threshold > 100)
@@ -32,8 +32,7 @@ RCODE set_mode(FILE * handle, unsigned char mode) {
 			mode!= FAN_MODE_BASIC &&
 			mode != FAN_MODE_AUTO &&
 			mode != FAN_MODE_CURRENT) {
-		ERROR("set_mode", "provided mode is not allowed");
-		return RC_FAILED;
+		ERROR("set_mode", "provided mode is not allowed", RC_FAILED)
 	}
 
 	RCODE res = write_ec(handle, FAN_MODE, &mode, 1);
@@ -44,8 +43,7 @@ unsigned char get_mode(FILE * handle) {
 	unsigned char result;
 	RCODE res = read_ec(handle, FAN_MODE, &result, 1);
 	if(res != RC_OK) {
-		ERROR("get_mode", "an error occured while reading ec");
-		return -1;
+		ERROR("get_mode", "an error occured while reading ec", -1);
 	}
 
 	return result;
@@ -55,8 +53,7 @@ RCODE set_cooler_boost(FILE * handle, unsigned char value) {
 	if(value > 0x80)
 		value = 0x80;
 	if(write_ec(handle, COOLER_BOOST, &value, 1) != RC_OK) {
-		ERROR("set_cooler_boost", "write_ec: an error occured");
-		return RC_FAILED;
+		ERROR("set_cooler_boost", "write_ec: an error occured", RC_FAILED);
 	}
 
 	return RC_OK;
@@ -65,8 +62,7 @@ RCODE set_cooler_boost(FILE * handle, unsigned char value) {
 unsigned char get_cooler_boost(FILE * handle) {
 	unsigned char value;
 	if(read_ec(handle, COOLER_BOOST, &value, 1) != RC_OK) {
-		ERROR("get_cooler_boost", "error in read_ec");
-		return -1;
+		ERROR("get_cooler_boost", "error in read_ec", -1);
 	}
 
 	return value;
@@ -76,8 +72,7 @@ unsigned char get_cooler_boost(FILE * handle) {
 uint8_t get_gpu_temp(FILE * handle) {
 	uint8_t result;
 	if(read_ec(handle, GPU_TEMP, &result, 1) != RC_OK) {
-		ERROR("get_gpu_temp", "error in read_ec");
-		return -1;
+		ERROR("get_gpu_temp", "error in read_ec", -1);
 	}
 
 	return result;
@@ -87,8 +82,7 @@ uint8_t get_gpu_temp(FILE * handle) {
 uint8_t get_cpu_temp(FILE * handle) {
 	uint8_t result;
 	if(read_ec(handle, CPU_TEMP, &result, 1) != RC_OK) {
-		ERROR("get_cpu_temp", "error in read_ec");
-		return -1;
+		ERROR("get_cpu_temp", "error in read_ec", -1);
 	}
 
 	return result;
@@ -108,19 +102,16 @@ RCODE set_fan_mapping(FILE * handle, int fan, temp_mapper_t mapper) {
 		temp_start_address = CPU1_TEMP;
 		fan_start_address = CPU_FAN_ADDR;
 	} else {
-		ERROR("set_fan_mapping", "invalid fan id");
-		return RC_FAILED;
+		ERROR("set_fan_mapping", "invalid fan id", RC_FAILED);
 	}
 
 	if(write_ec(handle, temp_start_address, mapper.temps, temp_count) != RC_OK) {
-		ERROR("set_fan_mapping", "error when setting temp addresses");
-		return RC_FAILED;
+		ERROR("set_fan_mapping", "error when setting temp addresses", RC_FAILED);
 	}
 
 
 	if(write_ec(handle, fan_start_address, mapper.fan_powers, fan_count) != RC_OK) {
-		ERROR("set_fan_mapping", "error when setting fan values");
-		return RC_FAILED;
+		ERROR("set_fan_mapping", "error when setting fan values", RC_FAILED);
 	}
 
 

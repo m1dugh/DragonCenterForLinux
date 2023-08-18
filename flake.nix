@@ -33,12 +33,6 @@
                     gtk3
                 ];
             };
-
-            test-install = pkgs.mkShell {
-                nativeBuildInputs = with self.packages.${system}; [
-                    dragon-center2
-                ];
-            };
         };
 
         packages.${system} = {
@@ -50,13 +44,13 @@
 
                 nativeBuildInputs = with pkgs; [
                     gnumake
-                        gcc
-                        pkg-config
+                    gcc
+                    pkg-config
                 ];
 
                 buildInputs = with pkgs; [
                     glib
-                        gtk3
+                    gtk3
                 ];
 
                 configurePhase = ''
@@ -69,7 +63,7 @@
 
                 installPhase = ''
                     cp -r ./resources "$out/"
-                    install -D ./bin/DragonCenter2 -m 0555 "$out/bin/$name"
+                    install -D ./bin/Release/DragonCenter2 -m 0555 "$out/bin/$name"
                     '';
             };
 

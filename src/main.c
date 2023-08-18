@@ -1,4 +1,5 @@
 #include "env.h"
+#include "ui.h"
 #include "utils/file_utils.h"
 #include "dragon_utils/dragon_utils.h"
 #include <stdio.h>
@@ -7,31 +8,20 @@
 
 #define GLADE_PATH "./resources/ui/Window.glade"
 
-
 int main(int argc, char ** argv) {
     FILE* handle = open_ec();
 
+    if (handle == NULL) {
+        // return -1;
+    }
 
-    GtkBuilder* builder;
-    GtkWidget*  window;
+    ui_t *ui = ui_init(handle, GLADE_PATH, argc, argv);
 
-    gtk_init(&argc, &argv);
-
-    builder = gtk_builder_new_from_file(GLADE_PATH);
-
-    window = GTK_WIDGET(gtk_builder_get_object(builder, "window_main"));
-    gtk_builder_connect_signals(builder, NULL);
-
-    g_object_unref(builder);
-
-    gtk_widget_show(window);
+    gtk_widget_show(ui->window);
     gtk_main();
+
+    g_object_unref(ui->builder);
 
     close_ec(handle);
     return 0;
-}
-
-void on_window_main_destroy()
-{
-    gtk_main_quit();
 }
