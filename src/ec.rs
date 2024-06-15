@@ -6,7 +6,7 @@ use std::io::{Result, Seek, Read, Write, SeekFrom};
 static COOLER_BOOST_OFF: u8 = 0;
 static COOLER_BOOST_ON: u8 = 0x80;
 
-static FAN_DIVISOR: u16 = 47800;
+static FAN_DIVISOR: u32 = 478000;
 static BATTERY_OFFSET: u8 = 0x80;
 
 #[derive(Debug)]
@@ -131,20 +131,20 @@ impl EmbeddedController {
         Ok(self.read_data(&config)?.to_fan_speed())
     }
 
-    pub fn read_gpu_fan_rpm(&mut self) -> Result<u16> {
+    pub fn read_gpu_fan_rpm(&mut self) -> Result<u32> {
         let config = self.config.realtime_gpu_fan_rpm.clone();
         let res = self.read_u16(config.address)?;
 
-        Ok(match res {
+        Ok(match res.into() {
             0 => 0,
             val => FAN_DIVISOR / val,
         })
     }
 
-    pub fn read_cpu_fan_rpm(&mut self) -> Result<u16> {
+    pub fn read_cpu_fan_rpm(&mut self) -> Result<u32> {
         let config = self.config.realtime_cpu_fan_rpm.clone();
         let res = self.read_u16(config.address)?;
-        Ok(match res {
+        Ok(match res.into() {
             0 => 0,
             val => FAN_DIVISOR / val,
         })
@@ -177,7 +177,7 @@ impl EmbeddedController {
         Ok(res - BATTERY_OFFSET)
     }
 
-    pub fn write_battery_offset(&mut self, threshold: u8) -> Result<()> {
+    pub fn write_battery_threshold(&mut self, threshold: u8) -> Result<()> {
         if threshold >= 100 || threshold <= 0 {
             return Err(std::io::Error::new(std::io::ErrorKind::Other, "Invalid value for threshold"));
         }
