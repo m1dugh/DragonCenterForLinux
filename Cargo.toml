@@ -1,11 +1,11 @@
 [package]
-name = "app"
+name = "dragon-center-for-linux"
 version = "0.1.0"
 description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
-default-run = "app"
+authors = ["m1dugh <romain103paris@gmail.com>"]
+license = "GPL-3.0"
+repository = "https://github.com/m1dugh/DragonCenterForLinux.git"
+default-run = "dragon-center-for-linux"
 edition = "2021"
 rust-version = "1.60"
 
