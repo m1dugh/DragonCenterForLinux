@@ -2,81 +2,47 @@
     description = "The MSI Dragon Center 2 utility for Linux";
 
     inputs = {
-        nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+        nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+        systems.url = "github:nix-systems/default-linux";
+
+        flake-utils = {
+            url = "github:numtide/flake-utils";
+            inputs.systems.follows = "systems";
+        };
     };
 
     outputs = {
-        self,
-        nixpkgs
-    } @ inputs :
-    let
-        system = "x86_64-linux";
-        inherit (nixpkgs) lib;
-        pkgs = nixpkgs.legacyPackages.${system};
-    in {
+        flake-utils,
+        nixpkgs,
+        ...
+    }:
+    flake-utils.lib.eachDefaultSystem(system: 
+    let pkgs = import nixpkgs {
+        inherit system;
+    };
+    in rec {
+        apps = rec {
+            default = dragon-center-for-linux;
 
-        devShells.${system}={
-
-            default = pkgs.mkShell {
-
-                nativeBuildInputs = with pkgs; [
-                    gdb
-                    gnumake
-                    gcc
-                    pkg-config
-                    glade
-                    clang-tools
-                ];
-
-                buildInputs = with pkgs; [
-                    glib
-                    gtk3
-                ];
+            dragon-center-for-linux = {
+                type = "app";
+                program = "${packages.dragon-center-for-linux}/bin/dragon-center-for-linux";
             };
         };
+        packages = rec {
+            default = dragon-center-for-linux;
+            dragon-center-for-linux = pkgs.rustPlatform.buildRustPackage {
+                pname = "dragon-center-for-linux";
+                version = "0.0.1";
 
-        packages.${system} = {
-
-            dragon-center2 = pkgs.stdenv.mkDerivation {
-
-                name = "DragonCenter";
                 src = ./.;
 
+                cargoLock.lockFile = ./Cargo.lock;
+
                 nativeBuildInputs = with pkgs; [
-                    gnumake
-                    gcc
                     pkg-config
                 ];
-
-                buildInputs = with pkgs; [
-                    glib
-                    gtk3
-                ];
-
-                configurePhase = ''
-                    mkdir -p $out/bin
-                    '';
-
-                buildPhase = ''
-                    make
-                    '';
-
-                installPhase = ''
-                    cp -r ./resources "$out/"
-                    install -D ./bin/Release/DragonCenter2 -m 0555 "$out/bin/$name"
-                    '';
             };
-
-            default = self.packages.${system}.dragon-center2;
         };
-
-        apps.${system}.default = 
-            let
-            mypkgs = self.packages.${system};
-        in {
-            type = "app";
-            program = "${mypkgs.default}/bin/DragonCenter";
-        };
-
-    };
+    });
 }

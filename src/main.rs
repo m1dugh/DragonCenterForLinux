@@ -2,7 +2,7 @@ mod config;
 mod ec;
 mod data;
 
-use ec::EmbeddedController;
+use crate::ec::EmbeddedController;
 
 use crate::config::read_config;
 
@@ -32,8 +32,6 @@ fn main() -> std::io::Result<()> {
 
     let mode = controller.read_fan_mode()?;
     println!("fan mode {:?}", mode);
-
-    controller.write_fan_mode(FanMode::Advanced);
 
     Ok(())
 }
