@@ -6,6 +6,11 @@
     <title>Document</title>
   </head>
   <body>
-    <h1>Welcome from Tauri!</h1>
+      <h1 id="header"></h1>
+    <script>
+        const header = document.querySelector("#header")
+        const { invoke } = window.__TAURI__.tauri
+        invoke('greet', { name: 'World'}).then(res => header.innerHTML = res)
+    </script>
   </body>
 </html>
