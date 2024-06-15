@@ -21,11 +21,10 @@ fn get_battery_threshold(state: tauri::State<Mutex<EmbeddedController>>) -> Resu
 #[tauri::command]
 fn set_battery_threshold(threshold: u8, state: tauri::State<Mutex<EmbeddedController>>) -> Result<(), String> {
     let mut controller = state.lock().unwrap();
-    let battery = match controller.write_battery_threshold(threshold) {
-        Ok(val) => val,
-        Err(_) => return Err("error reading battery".into())
-    };
-    Ok(())
+    match controller.write_battery_threshold(threshold) {
+        Err(_) => return Err("error reading battery".into()),
+        _ => Ok(())
+    }
 }
 
 fn main() -> std::io::Result<()> {

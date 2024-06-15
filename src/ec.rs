@@ -178,7 +178,7 @@ impl EmbeddedController {
     }
 
     pub fn write_battery_threshold(&mut self, threshold: u8) -> Result<()> {
-        if threshold >= 100 || threshold <= 0 {
+        if threshold > 100 || threshold <= 30 {
             return Err(std::io::Error::new(std::io::ErrorKind::Other, "Invalid value for threshold"));
         }
 
