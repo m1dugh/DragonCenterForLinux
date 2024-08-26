@@ -3,9 +3,11 @@ mod config;
 mod data;
 mod cli;
 mod daemon;
+mod client;
 
 use crate::ec::{EmbeddedController};
 use crate::config::read_config;
+use crate::client::run_command;
 use crate::cli::Args;
 use clap::Parser;
 
@@ -24,6 +26,13 @@ fn main() -> std::io::Result<()> {
 
     if args.daemon {
         return daemon::run_daemon(&args);
+    }
+
+    match args.command {
+        Some(command) => {
+            return run_command(command);
+        }
+        None => {}
     }
 
     Ok(())

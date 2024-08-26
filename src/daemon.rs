@@ -6,6 +6,7 @@ use crate::cli::Args;
 use nix::unistd::Uid;
 
 pub fn handle_client(mut stream: UnixStream) {
+    let mut command_builder = string_builder::Builder::new(1024);
     let mut buf: [u8; 1024] = [0; 1024];
     loop {
         match stream.read(&mut buf) {
@@ -14,13 +15,23 @@ pub fn handle_client(mut stream: UnixStream) {
                 return;
             }
             Ok(size) => {
+                command_builder.append(&buf[..]);
                 if size < buf.len() {
                     break
                 }
-                println!("result: {}", String::from_utf8_lossy(&buf));
             }
         }
     }
+    let command = match command_builder.string() {
+        Ok(val) => val,
+        Err(e) => {
+            eprintln!("Error: {}", e);
+            return;
+        },
+
+    };
+
+    println!("received: {}", command);
 }
 
 pub fn run_daemon(_args: &Args) -> std::io::Result<()> {
@@ -29,16 +40,24 @@ pub fn run_daemon(_args: &Args) -> std::io::Result<()> {
         return Err(Error::new(ErrorKind::PermissionDenied, "The daemon can only be started as root"))
     }
 
-    let daemonize = Daemonize::new()
-        .pid_file("/tmp/dragon-center.pid");
 
-    match daemonize.start() {
-        Ok(_) => println!("Starting daemon"),
-        Err(e) => {
-            eprintln!("error: {}", e);
-            return Err(Error::new(ErrorKind::Other, "Could not start daemon"))
+    if ! _args.debug {
+        let daemonize = Daemonize::new()
+            .pid_file("/tmp/dragon-center.pid");
+
+        match daemonize.start() {
+            Ok(_) => println!("Starting daemon"),
+            Err(e) => {
+                eprintln!("error: {}", e);
+                return Err(Error::new(ErrorKind::Other, "Could not start daemon"))
+            }
         }
+    } else {
+        println!("Starting undaemonized instance");
     }
+
+    // Delete socket in case it exists
+    let _ = std::fs::remove_file("/run/dragon-center.sock");
 
     let listener = UnixListener::bind("/run/dragon-center.sock")?;
 
