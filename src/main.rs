@@ -1,16 +1,15 @@
-mod ec;
-mod config;
-mod data;
 mod cli;
-mod daemon;
 mod client;
+mod config;
+mod daemon;
+mod data;
+mod ec;
 
-use crate::ec::{EmbeddedController};
-use crate::config::read_config;
-use crate::client::run_command;
 use crate::cli::Args;
+use crate::client::run_command;
+use crate::config::read_config;
+use crate::ec::EmbeddedController;
 use clap::Parser;
-
 
 fn main() -> std::io::Result<()> {
     // let config = match read_config("config.yaml") {

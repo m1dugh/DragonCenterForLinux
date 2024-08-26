@@ -1,6 +1,6 @@
-use std::fmt;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use serde::{Serialize, Deserialize};
+use std::fmt;
 
 pub type Address = u64;
 
@@ -39,7 +39,11 @@ pub struct Config {
 
 impl fmt::Display for DataMap {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{{realtime: {}, registers: ({:?})}}", self.realtime_data, self.multi_data)
+        write!(
+            f,
+            "{{realtime: {}, registers: ({:?})}}",
+            self.realtime_data, self.multi_data
+        )
     }
 }
 
@@ -55,8 +59,7 @@ impl fmt::Display for EmbeddedControllerMap {
     }
 }
 
-pub fn read_config(filename: &str) -> Result<Box<Config>, &'static str>
-{
+pub fn read_config(filename: &str) -> Result<Box<Config>, &'static str> {
     let file = match std::fs::File::open(filename) {
         Ok(val) => val,
         Err(_) => return Err("Could not open file"),

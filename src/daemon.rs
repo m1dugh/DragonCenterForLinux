@@ -1,6 +1,9 @@
-use std::{os::unix::net::{UnixListener, UnixStream}, thread};
 use daemonize::Daemonize;
-use std::io::{ErrorKind, Error, Read};
+use std::io::{Error, ErrorKind, Read};
+use std::{
+    os::unix::net::{UnixListener, UnixStream},
+    thread,
+};
 
 use crate::cli::Args;
 use nix::unistd::Uid;
@@ -17,7 +20,7 @@ pub fn handle_client(mut stream: UnixStream) {
             Ok(size) => {
                 command_builder.append(&buf[..]);
                 if size < buf.len() {
-                    break
+                    break;
                 }
             }
         }
@@ -27,29 +30,28 @@ pub fn handle_client(mut stream: UnixStream) {
         Err(e) => {
             eprintln!("Error: {}", e);
             return;
-        },
-
+        }
     };
 
     println!("received: {}", command);
 }
 
 pub fn run_daemon(_args: &Args) -> std::io::Result<()> {
-
     if !Uid::effective().is_root() {
-        return Err(Error::new(ErrorKind::PermissionDenied, "The daemon can only be started as root"))
+        return Err(Error::new(
+            ErrorKind::PermissionDenied,
+            "The daemon can only be started as root",
+        ));
     }
 
-
-    if ! _args.debug {
-        let daemonize = Daemonize::new()
-            .pid_file("/tmp/dragon-center.pid");
+    if !_args.debug {
+        let daemonize = Daemonize::new().pid_file("/tmp/dragon-center.pid");
 
         match daemonize.start() {
             Ok(_) => println!("Starting daemon"),
             Err(e) => {
                 eprintln!("error: {}", e);
-                return Err(Error::new(ErrorKind::Other, "Could not start daemon"))
+                return Err(Error::new(ErrorKind::Other, "Could not start daemon"));
             }
         }
     } else {

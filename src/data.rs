@@ -1,4 +1,3 @@
-
 #[derive(Debug)]
 pub struct Temperature {
     pub temperature: u8,

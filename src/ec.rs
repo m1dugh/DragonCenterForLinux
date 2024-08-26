@@ -1,7 +1,7 @@
 use crate::config::{Address, DataMap, EmbeddedControllerMap};
 use crate::data::*;
-use std::fs::{OpenOptions, File};
-use std::io::{Result, Seek, Read, Write, SeekFrom};
+use std::fs::{File, OpenOptions};
+use std::io::{Read, Result, Seek, SeekFrom, Write};
 
 static COOLER_BOOST_OFF: u8 = 0;
 static COOLER_BOOST_ON: u8 = 0x80;
@@ -45,21 +45,16 @@ impl DataResult {
 
 impl EmbeddedController {
     pub fn new(config: Box<EmbeddedControllerMap>, filename: &str) -> std::io::Result<Self> {
-
         let f = OpenOptions::new()
             .write(true)
             .read(true)
             .create(false)
             .open(filename)?;
 
-        Ok(EmbeddedController {
-            config,
-            _file: f,
-        })
+        Ok(EmbeddedController { config, _file: f })
     }
 
-    fn read_byte(&mut self, address: Address) -> Result<u8>
-    {
+    fn read_byte(&mut self, address: Address) -> Result<u8> {
         let mut buffer = [0; 1];
         self._file.seek(SeekFrom::Start(address))?;
         self._file.read_exact(&mut buffer)?;
@@ -67,8 +62,7 @@ impl EmbeddedController {
         Ok(buffer[0])
     }
 
-    fn write_byte(&mut self, address: Address, value: u8) -> Result<()>
-    {
+    fn write_byte(&mut self, address: Address, value: u8) -> Result<()> {
         let mut buffer = [0; 1];
         buffer[0] = value;
         self._file.seek(SeekFrom::Start(address))?;
@@ -78,25 +72,21 @@ impl EmbeddedController {
         Ok(())
     }
 
-    fn read_data(&mut self, config: &DataMap) -> Result<DataResult>
-    {
+    fn read_data(&mut self, config: &DataMap) -> Result<DataResult> {
         let realtime_address = config.realtime_data;
-        let realtime =
-            self.read_byte(realtime_address)?;
+        let realtime = self.read_byte(realtime_address)?;
 
-        let multi = config.multi_data.clone()
+        let multi = config
+            .multi_data
+            .clone()
             .iter()
             .map(|address| self.read_byte(*address).unwrap())
             .collect();
 
-        Ok(DataResult {
-            realtime,
-            multi,
-        })
+        Ok(DataResult { realtime, multi })
     }
 
-    fn read_u16(&mut self, address: Address) -> Result<u16>
-    {
+    fn read_u16(&mut self, address: Address) -> Result<u16> {
         let mut buffer = [0; 2];
 
         self._file.seek(SeekFrom::Start(address))?;
@@ -157,8 +147,7 @@ impl EmbeddedController {
         Ok(value == COOLER_BOOST_ON)
     }
 
-    pub fn write_cooler_boost(&mut self, flag: bool) -> Result<()>
-    {
+    pub fn write_cooler_boost(&mut self, flag: bool) -> Result<()> {
         let address = self.config.cooler_boost;
         let value = match flag {
             true => COOLER_BOOST_ON,
@@ -179,7 +168,10 @@ impl EmbeddedController {
 
     pub fn write_battery_threshold(&mut self, threshold: u8) -> Result<()> {
         if threshold > 100 || threshold <= 30 {
-            return Err(std::io::Error::new(std::io::ErrorKind::Other, "Invalid value for threshold"));
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                "Invalid value for threshold",
+            ));
         }
 
         let value = threshold + BATTERY_OFFSET;
