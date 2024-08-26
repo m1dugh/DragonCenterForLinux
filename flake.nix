@@ -20,17 +20,18 @@
     let pkgs = import nixpkgs {
         inherit system;
     };
-    inherit (nixpkgs) lib;
-    in rec {
+
+    defaultArgs = {
+        inherit (nixpkgs) lib;
+        inherit pkgs;
+    };
+
+    in {
         devShells.default = pkgs.mkShell {
             nativeBuildInputs = with pkgs; [
-                pkg-config
-                libsoup
-                cargo-tauri
-                glibc
-                cairo
-                gtk3
-                webkitgtk
+                rustc
+                rustfmt
+                cargo
             ];
 
             # Environment variable to allow
@@ -38,40 +39,12 @@
             __NV_PRIME_RENDER_OFFLOAD = 1;
 
         };
-        apps = rec {
-            default = dragon-center-for-linux;
 
-            dragon-center-for-linux = {
-                type = "app";
-                program = "${packages.dragon-center-for-linux}/bin/dragon-center-for-linux";
-            };
-        };
         packages = rec {
             default = dragon-center-for-linux;
-            dragon-center-for-linux = 
-            let libs = with pkgs; [
-                libsoup
-                glibc
-                cairo
-                gtk3
-                webkitgtk
-            ];
-            in pkgs.rustPlatform.buildRustPackage {
-                pname = "dragon-center-for-linux";
-                version = "0.0.1";
-
-                src = ./.;
-
-                cargoLock.lockFile = ./Cargo.lock;
-
-                __NV_PRIME_RENDER_OFFLOAD = 1;
-
-                PKG_CONFIG_PATH = lib.strings.concatMapStringsSep ":" (lib: "${lib}/lib/pkgconfig") libs;
-                nativeBuildInputs = with pkgs; [
-                    pkg-config
-                ] ++ libs;
-
-            };
+            dragon-center-for-linux = pkgs.callPackage ./default.nix defaultArgs;
         };
+
+        formatter = pkgs.nixpkgs-fmt;
     });
 }
