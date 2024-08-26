@@ -48,5 +48,7 @@
       };
 
       formatter = pkgs.nixpkgs-fmt;
-    });
+    }) // {
+        nixosModules.default = import ./service.nix;
+    };
 }

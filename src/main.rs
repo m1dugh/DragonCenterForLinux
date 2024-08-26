@@ -23,16 +23,12 @@ fn main() -> std::io::Result<()> {
 
     let args = Args::parse();
 
-    if args.daemon {
-        return daemon::run_daemon(&args);
-    }
-
     match args.command {
         Some(command) => {
             return run_command(command);
         }
-        None => {}
+        None => {
+            return daemon::run_daemon(&args);
+        }
     }
-
-    Ok(())
 }

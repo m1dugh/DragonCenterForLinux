@@ -36,7 +36,7 @@ pub fn handle_client(mut stream: UnixStream) {
     println!("received: {}", command);
 }
 
-pub fn run_daemon(_args: &Args) -> std::io::Result<()> {
+pub fn run_daemon(args: &Args) -> std::io::Result<()> {
     if !Uid::effective().is_root() {
         return Err(Error::new(
             ErrorKind::PermissionDenied,
@@ -44,8 +44,9 @@ pub fn run_daemon(_args: &Args) -> std::io::Result<()> {
         ));
     }
 
-    if !_args.debug {
-        let daemonize = Daemonize::new().pid_file("/tmp/dragon-center.pid");
+    if args.daemon {
+        let daemonize = Daemonize::new()
+            .pid_file("/tmp/dragon-center.pid");
 
         match daemonize.start() {
             Ok(_) => println!("Starting daemon"),
