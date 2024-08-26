@@ -43,8 +43,8 @@
       };
 
       packages = rec {
-        default = dragon-center-for-linux;
-        dragon-center-for-linux = pkgs.callPackage ./default.nix defaultArgs;
+        default = dragon-center;
+        dragon-center = pkgs.callPackage ./default.nix defaultArgs;
       };
 
       formatter = pkgs.nixpkgs-fmt;
