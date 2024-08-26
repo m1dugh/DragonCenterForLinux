@@ -46,7 +46,7 @@ impl DataResult {
 impl EmbeddedController {
     pub fn new(config: Box<EmbeddedControllerMap>, filename: &str) -> std::io::Result<Self> {
 
-        let mut f = OpenOptions::new()
+        let f = OpenOptions::new()
             .write(true)
             .read(true)
             .create(false)
