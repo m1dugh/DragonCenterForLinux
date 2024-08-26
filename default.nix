@@ -18,4 +18,9 @@
   nativeBuildInputs = with pkgs; [
     pkg-config
   ] ++ libraryPath;
+
+  meta = {
+    mainProgram = "dragon-center";
+    licences = lib.licences.mit;
+  };
 }

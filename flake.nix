@@ -16,39 +16,40 @@
     , nixpkgs
     , ...
     }:
-    flake-utils.lib.eachDefaultSystem (system:
-    let
-      pkgs = import nixpkgs {
-        inherit system;
-      };
+    flake-utils.lib.eachDefaultSystem
+      (system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+        };
 
-      defaultArgs = {
-        inherit (nixpkgs) lib;
-        inherit pkgs;
-      };
+        defaultArgs = {
+          inherit (nixpkgs) lib;
+          inherit pkgs;
+        };
 
-    in
-    {
-      devShells.default = pkgs.mkShell {
-        nativeBuildInputs = with pkgs; [
-          rustc
-          rustfmt
-          cargo
-        ];
+      in
+      {
+        devShells.default = pkgs.mkShell {
+          nativeBuildInputs = with pkgs; [
+            rustc
+            rustfmt
+            cargo
+          ];
 
-        # Environment variable to allow
-        # Running on buggy nvidia cards
-        __NV_PRIME_RENDER_OFFLOAD = 1;
+          # Environment variable to allow
+          # Running on buggy nvidia cards
+          __NV_PRIME_RENDER_OFFLOAD = 1;
 
-      };
+        };
 
-      packages = rec {
-        default = dragon-center;
-        dragon-center = pkgs.callPackage ./default.nix defaultArgs;
-      };
+        packages = rec {
+          default = dragon-center;
+          dragon-center = pkgs.callPackage ./default.nix defaultArgs;
+        };
 
-      formatter = pkgs.nixpkgs-fmt;
-    }) // {
-        nixosModules.default = import ./service.nix;
+        formatter = pkgs.nixpkgs-fmt;
+      }) // {
+      nixosModules.default = import ./service.nix;
     };
 }
