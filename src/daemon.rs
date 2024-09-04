@@ -1,14 +1,19 @@
 use daemonize::Daemonize;
-use std::io::{Error, ErrorKind, Read};
+use string_builder::ToBytes;
+use std::io::{Error, ErrorKind, Read, Write};
 use std::{
     os::unix::net::{UnixListener, UnixStream},
     thread,
 };
 
 use crate::cli::Args;
+use crate::config::read_config;
+use crate::ec::EmbeddedController;
+use crate::ipc::Command::{self, WriteCommand, ReadCommand, WriteBattery, ReadBattery};
+use crate::ipc::CommandResponse;
 use nix::unistd::Uid;
 
-pub fn handle_client(mut stream: UnixStream) {
+pub fn handle_client(ec: Box<&mut EmbeddedController>, mut stream: UnixStream) {
     let mut command_builder = string_builder::Builder::new(1024);
     let mut buf: [u8; 1024] = [0; 1024];
     loop {
@@ -25,7 +30,8 @@ pub fn handle_client(mut stream: UnixStream) {
             }
         }
     }
-    let command = match command_builder.string() {
+
+    let command_str = match command_builder.string() {
         Ok(val) => val,
         Err(e) => {
             eprintln!("Error: {}", e);
@@ -33,7 +39,46 @@ pub fn handle_client(mut stream: UnixStream) {
         }
     };
 
-    println!("received: {}", command);
+    let command_str = command_str.trim_matches(char::from(0));
+
+    if command_str.is_empty() {
+        return;
+    }
+
+    let command = match serde_json::from_str::<Command>(command_str) {
+        Ok(value) => value,
+        Err(e) => {
+            eprintln!("Error: {}", e);
+            return;
+        }
+    };
+
+    match command {
+        WriteCommand { address, value } => {
+            println!("Setting {} at {}", value, address);
+        },
+        ReadCommand { address } => {
+            println!("Reading {}", address);
+        },
+        ReadBattery => {
+            let response = match ec.read_battery_threshold() {
+                Ok(val) => CommandResponse::Battery(val),
+                Err(e) => CommandResponse::Error(e.to_string()),
+            };
+
+            let response = serde_json::to_string(&response).unwrap();
+            let _ = stream.write(response.as_bytes());
+        }
+        WriteBattery { threshold } => {
+            let response = match ec.write_battery_threshold(threshold) {
+                Ok(()) => CommandResponse::Success,
+                Err(e) => CommandResponse::Error(e.to_string()),
+            };
+
+            let response = serde_json::to_string(&response).unwrap();
+            let _ = stream.write(response.as_bytes());
+        }
+    }
 }
 
 pub fn run_daemon(args: &Args) -> std::io::Result<()> {
@@ -59,6 +104,15 @@ pub fn run_daemon(args: &Args) -> std::io::Result<()> {
         println!("Starting undaemonized instance");
     }
 
+
+    let config = match read_config("config.yaml") {
+        Ok(val) => val,
+        Err(e) => panic!("{}", e),
+    };
+
+    let current_config = config.configs[&config.current_config].clone();
+
+
     // Delete socket in case it exists
     let _ = std::fs::remove_file("/run/dragon-center.sock");
 
@@ -67,7 +121,8 @@ pub fn run_daemon(args: &Args) -> std::io::Result<()> {
     for stream in listener.incoming() {
         match stream {
             Ok(stream) => {
-                thread::spawn(|| handle_client(stream));
+                let mut controller = EmbeddedController::new(current_config.clone(), &config.file)?;
+                thread::spawn(move || handle_client(Box::new(&mut controller), stream));
             }
             Err(err) => {
                 eprintln!("Error: {}", err);

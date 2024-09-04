@@ -4,6 +4,7 @@ mod config;
 mod daemon;
 mod data;
 mod ec;
+mod ipc;
 
 use crate::cli::Args;
 use crate::client::run_command;
