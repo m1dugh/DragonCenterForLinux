@@ -26,27 +26,27 @@ in
     };
 
     layout = mkOption {
-        type = types.nullOr format.type;
-        default = null;
-        description = ''
-            The embedded controller layout to use for this computer.
-        '';
+      type = types.nullOr format.type;
+      default = null;
+      description = ''
+        The embedded controller layout to use for this computer.
+      '';
     };
 
     layoutFile = mkOption {
-        type = types.nullOr types.path;
-        default = "${cfg.package}/share/config.yaml";
-        description = ''
-            The path to the embedded controller layout to use for this computer
-        '';
+      type = types.nullOr types.path;
+      default = "${cfg.package}/share/config.yaml";
+      description = ''
+        The path to the embedded controller layout to use for this computer
+      '';
     };
   };
 
   config = mkIf cfg.enable {
 
     assertions = [{
-        assertion = xor (cfg.layoutFile == null) (cfg.layout == null);
-        message = "Only one of `services.dragon-center.layoutFile` and `services.dragon-center.layout` should be set";
+      assertion = xor (cfg.layoutFile == null) (cfg.layout == null);
+      message = "Only one of `services.dragon-center.layoutFile` and `services.dragon-center.layout` should be set";
     }];
 
     boot = mkIf cfg.withBootOptions {
@@ -60,25 +60,27 @@ in
       cfg.package
     ];
 
-    systemd.services.dragon-center = 
-    let
-        configFile = if cfg.layout != null then format.generate "config.yaml" cfg.layout
-        else cfg.layoutFile;
-    in {
-      wantedBy = [ "multi-user.target" ];
+    systemd.services.dragon-center =
+      let
+        configFile =
+          if cfg.layout != null then format.generate "config.yaml" cfg.layout
+          else cfg.layoutFile;
+      in
+      {
+        wantedBy = [ "multi-user.target" ];
 
-      description = "starts the daemon for dragon center";
-      path = [
-        cfg.package
-      ];
+        description = "starts the daemon for dragon center";
+        path = [
+          cfg.package
+        ];
 
-      serviceConfig = {
-        ExecStart = "${getExe cfg.package} --config ${configFile}";
-        Type = "simple";
-        User = "root";
-        RestartSec = "5s";
-        Restart = "on-failure";
+        serviceConfig = {
+          ExecStart = "${getExe cfg.package} --config ${configFile}";
+          Type = "simple";
+          User = "root";
+          RestartSec = "5s";
+          Restart = "on-failure";
+        };
       };
-    };
   };
 }

@@ -1,15 +1,15 @@
 use daemonize::Daemonize;
-use string_builder::ToBytes;
 use std::io::{Error, ErrorKind, Read, Write};
 use std::{
     os::unix::net::{UnixListener, UnixStream},
     thread,
 };
+use string_builder::ToBytes;
 
 use crate::cli::Args;
 use crate::config::read_config;
 use crate::ec::EmbeddedController;
-use crate::ipc::Command::{self, WriteCommand, ReadCommand, WriteBattery, ReadBattery};
+use crate::ipc::Command::{self, ReadBattery, ReadCommand, WriteBattery, WriteCommand};
 use crate::ipc::CommandResponse;
 use nix::unistd::Uid;
 
@@ -56,10 +56,10 @@ pub fn handle_client(ec: Box<&mut EmbeddedController>, mut stream: UnixStream) {
     match command {
         WriteCommand { address, value } => {
             println!("Setting {} at {}", value, address);
-        },
+        }
         ReadCommand { address } => {
             println!("Reading {}", address);
-        },
+        }
         ReadBattery => {
             let response = match ec.read_battery_threshold() {
                 Ok(val) => CommandResponse::Battery(val),
@@ -90,8 +90,7 @@ pub fn run_daemon(args: &Args) -> std::io::Result<()> {
     }
 
     if args.daemon {
-        let daemonize = Daemonize::new()
-            .pid_file("/tmp/dragon-center.pid");
+        let daemonize = Daemonize::new().pid_file("/tmp/dragon-center.pid");
 
         match daemonize.start() {
             Ok(_) => println!("Starting daemon"),
@@ -112,7 +111,6 @@ pub fn run_daemon(args: &Args) -> std::io::Result<()> {
     };
 
     let current_config = config.configs[&config.current_config].clone();
-
 
     // Delete socket in case it exists
     let _ = std::fs::remove_file("/run/dragon-center.sock");

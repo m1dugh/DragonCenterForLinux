@@ -9,15 +9,8 @@ pub enum CommandResponse {
 
 #[derive(Serialize, Deserialize)]
 pub enum Command {
-    WriteCommand {
-        address: u16,
-        value: u8,
-    },
-    ReadCommand {
-        address: u8,
-    },
+    WriteCommand { address: u16, value: u8 },
+    ReadCommand { address: u8 },
     ReadBattery,
-    WriteBattery {
-        threshold: u8,
-    },
+    WriteBattery { threshold: u8 },
 }
