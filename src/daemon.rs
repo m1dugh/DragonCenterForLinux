@@ -104,8 +104,9 @@ pub fn run_daemon(args: &Args) -> std::io::Result<()> {
         println!("Starting undaemonized instance");
     }
 
+    let config_file = args.config.clone().unwrap_or("config.yaml".to_string());
 
-    let config = match read_config("config.yaml") {
+    let config = match read_config(config_file.as_str()) {
         Ok(val) => val,
         Err(e) => panic!("{}", e),
     };

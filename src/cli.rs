@@ -10,4 +10,7 @@ pub struct Args {
     /// The command to send to the daemon
     #[arg(short, long)]
     pub command: Option<String>,
+
+    #[arg(short, long)]
+    pub config: Option<String>,
 }

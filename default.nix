@@ -19,6 +19,11 @@
     pkg-config
   ] ++ libraryPath;
 
+  postFixup = ''
+    mkdir -p $out/share
+    install -m 0644 $src/config.yaml $out/share/
+  '';
+
   meta = {
     mainProgram = "dragon-center";
     licences = lib.licences.mit;
