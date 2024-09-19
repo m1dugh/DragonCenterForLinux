@@ -1,18 +1,41 @@
-import { Button, VerticalBox } from "std-widgets.slint";
+import { CheckBox, Button } from "std-widgets.slint";
 
 export component AppWindow inherits Window {
-    in-out property <int> counter: 42;
-    callback request-increase-value();
-    VerticalBox {
-        Text {
-            text: "Counter: \{root.counter}";
-        }
 
-        Button {
-            text: "Increase value";
-            clicked => {
-                root.request-increase-value();
-            }
-        }
+    in-out property <string> battery-mode;
+    
+    rec := Rectangle {
+             HorizontalLayout {
+                 Button {
+text: "min";
+      clicked => {
+          root.battery-mode = "min";
+      }
+                 }
+                 Button {
+text: "mid";
+      clicked => {
+          root.battery-mode = "mid";
+      }
+                 }
+                 Button {
+text: "max";
+      clicked => {
+          root.battery-mode = "max";
+      }
+                 }
+             }
     }
+
+    states [
+        min when self.battery-mode == "min": {
+            rec.background: blue;
+        }
+        min when self.battery-mode == "mid": {
+            rec.background: green;
+        }
+        min when self.battery-mode == "max": {
+            rec.background: red;
+        }
+    ]
 }

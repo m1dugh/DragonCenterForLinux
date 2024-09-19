@@ -14,6 +14,7 @@
   outputs =
     { flake-utils
     , nixpkgs
+    , self
     , ...
     }:
     flake-utils.lib.eachDefaultSystem
@@ -22,25 +23,34 @@
         pkgs = import nixpkgs {
           inherit system;
         };
-
+        inherit (nixpkgs) lib;
         defaultArgs = {
-          inherit (nixpkgs) lib;
-          inherit pkgs;
+          inherit pkgs lib;
         };
 
       in
       {
-        devShells.default = pkgs.mkShell {
-          nativeBuildInputs = with pkgs; [
-            rustc
-            rustfmt
-            cargo
-          ];
+        devShells = {
+          default = self.devShells.${system}.wayland;
+          wayland =
+            pkgs.mkShell {
+              nativeBuildInputs = with pkgs; [
+                rustc
+                rustfmt
+                cargo
+              ];
 
-          # Environment variable to allow
-          # Running on buggy nvidia cards
-          __NV_PRIME_RENDER_OFFLOAD = 1;
+              LD_LIBRARY_PATH = "$LD_LIBRARY_PATH:${lib.makeLibraryPath (with pkgs; [
+                wayland
+                libxkbcommon
+                fontconfig
+              ])}";
 
+              # Environment variable to allow
+              # Running on buggy nvidia cards
+              __NV_PRIME_RENDER_OFFLOAD = 1;
+
+            };
         };
 
         packages = rec {
