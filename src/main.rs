@@ -1,35 +1,22 @@
-mod cli;
-mod client;
-mod config;
-mod daemon;
-mod data;
-mod ec;
-mod ipc;
+// Prevent console window in addition to Slint window in Windows release builds when, e.g., starting the app via file manager. Ignored on other platforms.
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use crate::cli::Args;
-use crate::client::run_command;
-use crate::config::read_config;
-use crate::ec::EmbeddedController;
-use clap::Parser;
+use std::error::Error;
 
-fn main() -> std::io::Result<()> {
-    // let config = match read_config("config.yaml") {
-    //     Ok(val) => val,
-    //     Err(e) => panic!("{}", e),
-    // };
+slint::include_modules!();
 
-    // let current_config = config.configs[&config.current_config].clone();
+fn main() -> Result<(), Box<dyn Error>> {
+    let ui = AppWindow::new()?;
 
-    // let _controller = EmbeddedController::new(current_config, &config.file)?;
-
-    let args = Args::parse();
-
-    match args.command {
-        Some(command) => {
-            return run_command(command);
+    ui.on_request_increase_value({
+        let ui_handle = ui.as_weak();
+        move || {
+            let ui = ui_handle.unwrap();
+            ui.set_counter(ui.get_counter() + 1);
         }
-        None => {
-            return daemon::run_daemon(&args);
-        }
-    }
+    });
+
+    ui.run()?;
+
+    Ok(())
 }
