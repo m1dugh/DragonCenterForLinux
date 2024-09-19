@@ -8,20 +8,22 @@
   src = ./.;
 
   libraryPath = with pkgs; [
-    glibc
+      wayland
+      libxkbcommon
+      fontconfig
   ];
 
   cargoLock.lockFile = ./Cargo.lock;
 
-  LD_LIBRARY_PATH = lib.makeLibraryPath libraryPath;
+  enableParallelBuilding = true;
 
   nativeBuildInputs = with pkgs; [
     pkg-config
   ] ++ libraryPath;
 
   postFixup = ''
-    mkdir -p $out/share
-    install -m 0644 $src/config.yaml $out/share/
+    patchelf $out/bin/dragon-center \
+        --set-rpath ${lib.makeLibraryPath libraryPath}
   '';
 
   meta = {
