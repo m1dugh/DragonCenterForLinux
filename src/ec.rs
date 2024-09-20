@@ -173,7 +173,7 @@ pub fn get_cooler_boost() -> Result<CoolerBoost> {
 pub fn set_cooler_boost(cooler_boost: CoolerBoost) -> Result<()> {
     let mut file = fs::OpenOptions::new()
         .append(true)
-        .open("/sys/devices/platform/msi-ec/fan_mode")?;
+        .open("/sys/devices/platform/msi-ec/cooler_boost")?;
     file.write_fmt(format_args!("{}", cooler_boost.to_string()))?;
     Ok(())
 }
