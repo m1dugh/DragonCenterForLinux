@@ -2,40 +2,61 @@ import { CheckBox, Button } from "std-widgets.slint";
 
 export component AppWindow inherits Window {
 
-    in-out property <string> battery-mode;
+    in-out property <string> battery-mode: "min";
+
+    callback request-battery-update(string);
     
-    rec := Rectangle {
-             HorizontalLayout {
-                 Button {
-text: "min";
-      clicked => {
-          root.battery-mode = "min";
-      }
-                 }
-                 Button {
-text: "mid";
-      clicked => {
-          root.battery-mode = "mid";
-      }
-                 }
-                 Button {
-text: "max";
-      clicked => {
-          root.battery-mode = "max";
-      }
-                 }
+     HorizontalLayout {
+         Button {
+              text: "min";
+              clicked => {
+                  root.battery-mode = "min";
+                 request-battery-update(root.battery-mode);
+              }
+         }
+         min-check := CheckBox {
+            enabled: false;
+            checked: battery-mode == "min";
+         }
+         Button {
+             text: "mid";
+             clicked => {
+                 root.battery-mode = "medium";
+                 request-battery-update(root.battery-mode);
              }
-    }
+         }
+         medium-check := CheckBox {
+            enabled: false;
+            checked: battery-mode == "medium";
+         }
+         Button {
+             text: "max";
+             clicked => {
+                 root.battery-mode = "max";
+                 request-battery-update(root.battery-mode);
+             }
+         }
+         max-check := CheckBox {
+            enabled: false;
+            checked: battery-mode == "max";
+         }
+     }
 
     states [
         min when self.battery-mode == "min": {
-            rec.background: blue;
+            min-check.checked: true;
+            medium-check.checked: false;
+            max-check.checked: false;
         }
-        min when self.battery-mode == "mid": {
-            rec.background: green;
+        medium when self.battery-mode == "medium": {
+            min-check.checked: false;
+            medium-check.checked: true;
+            max-check.checked: false;
         }
-        min when self.battery-mode == "max": {
-            rec.background: red;
+        max when self.battery-mode == "max": {
+            min-check.checked: false;
+            medium-check.checked: false;
+            max-check.checked: true;
         }
     ]
 }
