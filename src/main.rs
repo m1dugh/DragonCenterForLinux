@@ -19,10 +19,16 @@ fn main() -> Result<(), Box<dyn Error>> {
     ui.set_shift_current_value(ec::get_current_shift_mode()?.into());
     ui.set_fan_current_value(ec::get_current_fan_mode()?.into());
 
-    let available_shift_modes: Vec::<SharedString> = ec::get_available_shift_modes()?.into_iter().map(Into::into).collect();
+    let available_shift_modes: Vec<SharedString> = ec::get_available_shift_modes()?
+        .into_iter()
+        .map(Into::into)
+        .collect();
     ui.set_shift_model(ModelRc::new(VecModel::from(available_shift_modes.clone())));
 
-    let available_fan_modes: Vec::<SharedString> = ec::get_available_fan_modes()?.into_iter().map(Into::into).collect();
+    let available_fan_modes: Vec<SharedString> = ec::get_available_fan_modes()?
+        .into_iter()
+        .map(Into::into)
+        .collect();
     ui.set_fan_model(ModelRc::new(VecModel::from(available_fan_modes.clone())));
 
     ui.set_cooler_boost_value(ec::get_cooler_boost()?.into());
@@ -36,19 +42,14 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
     });
 
-    ui.on_request_shift_update(|shift| {
-        match ec::set_shift_mode(shift.to_string()) {
-            Err(e) => eprintln!("{}", e),
-            _ => {}
-        }
+    ui.on_request_shift_update(|shift| match ec::set_shift_mode(shift.to_string()) {
+        Err(e) => eprintln!("{}", e),
+        _ => {}
     });
 
-
-    ui.on_request_fan_update(|fan| {
-        match ec::set_fan_mode(fan.to_string()) {
-            Err(e) => eprintln!("{}", e),
-            _ => {}
-        }
+    ui.on_request_fan_update(|fan| match ec::set_fan_mode(fan.to_string()) {
+        Err(e) => eprintln!("{}", e),
+        _ => {}
     });
 
     ui.on_request_cooler_boost_update({

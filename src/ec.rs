@@ -1,7 +1,6 @@
 use std::fs::{self, read_to_string};
 use std::io::{Error, ErrorKind, Read, Result, Write};
 
-
 pub enum BatteryMode {
     Min,
     Medium,
@@ -14,7 +13,8 @@ impl ToString for BatteryMode {
             BatteryMode::Max => "max",
             BatteryMode::Min => "min",
             BatteryMode::Medium => "medium",
-        }.to_string()
+        }
+        .to_string()
     }
 }
 
@@ -65,7 +65,8 @@ impl ToString for CoolerBoost {
         match self {
             Self::On => "on",
             Self::Off => "off",
-        }.to_string()
+        }
+        .to_string()
     }
 }
 
@@ -78,7 +79,6 @@ pub fn set_battery_mode(battery_mode: BatteryMode) -> Result<()> {
 }
 
 pub fn get_battery_mode() -> Result<BatteryMode> {
-
     let mut file = fs::OpenOptions::new()
         .read(true)
         .open("/sys/devices/platform/msi-ec/battery_mode")?;
@@ -92,10 +92,12 @@ pub fn get_battery_mode() -> Result<BatteryMode> {
 }
 
 pub fn get_available_shift_modes() -> Result<Vec<String>> {
-    Ok(read_to_string("/sys/devices/platform/msi-ec/available_shift_modes")?
-        .lines()
-        .map(String::from)
-        .collect())
+    Ok(
+        read_to_string("/sys/devices/platform/msi-ec/available_shift_modes")?
+            .lines()
+            .map(String::from)
+            .collect(),
+    )
 }
 
 pub fn get_current_shift_mode() -> Result<String> {
@@ -103,10 +105,14 @@ pub fn get_current_shift_mode() -> Result<String> {
         .lines()
         .take(1)
         .map(String::from)
-        .nth(0) {
-            Some(val) => Ok(val),
-            None => Err(Error::new(ErrorKind::Other, "Could not find the current shift mode")),
-        }
+        .nth(0)
+    {
+        Some(val) => Ok(val),
+        None => Err(Error::new(
+            ErrorKind::Other,
+            "Could not find the current shift mode",
+        )),
+    }
 }
 
 pub fn set_shift_mode(shift_mode: String) -> Result<()> {
@@ -118,10 +124,12 @@ pub fn set_shift_mode(shift_mode: String) -> Result<()> {
 }
 
 pub fn get_available_fan_modes() -> Result<Vec<String>> {
-    Ok(read_to_string("/sys/devices/platform/msi-ec/available_fan_modes")?
-        .lines()
-        .map(String::from)
-        .collect())
+    Ok(
+        read_to_string("/sys/devices/platform/msi-ec/available_fan_modes")?
+            .lines()
+            .map(String::from)
+            .collect(),
+    )
 }
 
 pub fn get_current_fan_mode() -> Result<String> {
@@ -129,10 +137,14 @@ pub fn get_current_fan_mode() -> Result<String> {
         .lines()
         .take(1)
         .map(String::from)
-        .nth(0) {
-            Some(val) => Ok(val),
-            None => Err(Error::new(ErrorKind::Other, "Could not find the current shift mode")),
-        }
+        .nth(0)
+    {
+        Some(val) => Ok(val),
+        None => Err(Error::new(
+            ErrorKind::Other,
+            "Could not find the current shift mode",
+        )),
+    }
 }
 
 pub fn set_fan_mode(fan_mode: String) -> Result<()> {
@@ -148,10 +160,14 @@ pub fn get_cooler_boost() -> Result<CoolerBoost> {
         .lines()
         .take(1)
         .map(CoolerBoost::from)
-        .nth(0) {
-            Some(val) => Ok(val),
-            None => Err(Error::new(ErrorKind::Other, "Could not find the current shift mode")),
-        }
+        .nth(0)
+    {
+        Some(val) => Ok(val),
+        None => Err(Error::new(
+            ErrorKind::Other,
+            "Could not find the current shift mode",
+        )),
+    }
 }
 
 pub fn set_cooler_boost(cooler_boost: CoolerBoost) -> Result<()> {
