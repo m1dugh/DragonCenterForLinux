@@ -1,17 +1,16 @@
-import { CheckBox, Button } from "std-widgets.slint";
+import { CheckBox, Button, TabWidget, ComboBox, Switch } from "std-widgets.slint";
 
-export component AppWindow inherits Window {
-
+component BatterySelector {
     in-out property <string> battery-mode: "min";
 
-    callback request-battery-update(string);
+    callback request-update(string);
     
      HorizontalLayout {
          Button {
               text: "min";
               clicked => {
                   root.battery-mode = "min";
-                 request-battery-update(root.battery-mode);
+                 request-update(root.battery-mode);
               }
          }
          min-check := CheckBox {
@@ -22,7 +21,7 @@ export component AppWindow inherits Window {
              text: "mid";
              clicked => {
                  root.battery-mode = "medium";
-                 request-battery-update(root.battery-mode);
+                 request-update(root.battery-mode);
              }
          }
          medium-check := CheckBox {
@@ -33,7 +32,7 @@ export component AppWindow inherits Window {
              text: "max";
              clicked => {
                  root.battery-mode = "max";
-                 request-battery-update(root.battery-mode);
+                 request-update(root.battery-mode);
              }
          }
          max-check := CheckBox {
@@ -59,4 +58,47 @@ export component AppWindow inherits Window {
             max-check.checked: true;
         }
     ]
+}
+
+export component AppWindow inherits Window {
+    callback request-battery-update <=> battery-tab.request-update;
+    in-out property <string> battery-mode <=> battery-tab.battery-mode;
+
+    callback request-shift-update <=> shift-tab.selected;
+    in property <string> shift-current-value <=> shift-tab.current-value;
+    in property <[string]> shift-model <=> shift-tab.model;
+
+    callback request-fan-update <=> fan-tab.selected;
+    in property <string> fan-current-value <=> fan-tab.current-value;
+    in property <[string]> fan-model <=> fan-tab.model;
+
+    callback request-cooler-boost-update <=> cooler-boost.toggled; 
+
+    in-out property cooler-boost-value <=> cooler-boost.checked;
+
+    TabWidget {
+        Tab {
+            title: "battery";
+            battery-tab := BatterySelector {
+            }
+        }
+        Tab {
+            title: "shift";
+            HorizontalLayout {
+                Rectangle {
+                    shift-tab := ComboBox {
+                    }
+                }
+                Rectangle {
+                    fan-tab := ComboBox {
+                    }
+                }
+                Rectangle {
+                    cooler-boost := Switch {
+                        text: "cooler boost";
+                    }
+                }
+            }
+        }
+    }
 }
