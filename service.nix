@@ -10,7 +10,7 @@ let
     types
     mkIf
     ;
-  cfg = config.services.dragon-center;
+  cfg = config.hardware.msi-dragon-center;
 
   driverOptions = {
     options = {
@@ -26,7 +26,7 @@ let
   };
 in
 {
-  options.hardware.msi.dragon-center = {
+  options.hardware.msi-dragon-center = {
     enable = mkEnableOption "Dragon center service";
 
     package = mkOption {
@@ -37,7 +37,7 @@ in
     };
 
     driver = mkOption {
-      type = driverOptions;
+      type = types.submodule driverOptions;
       description = "The options for the driver";
       default = { };
     };
@@ -49,10 +49,9 @@ in
       extraModulePackages = [
         cfg.driver.package
       ];
-
-      kernelPackages = config.boot.kernelPackages // {
-        msi-ec = cfg.driver.package;
-      };
+      kernelModules = [
+        "msi-ec"
+      ];
     };
 
     environment.systemPackages = [
