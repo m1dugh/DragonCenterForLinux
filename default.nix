@@ -24,7 +24,7 @@ let
     comment = "MSI Dragon Center for linux";
     genericName = "Dragon Center for linux";
     categories = [ "Settings" ];
-    exec = "dragon-center-launcher";
+    exec = "dragon-center";
   };
 
 in
