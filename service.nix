@@ -37,7 +37,7 @@ in
     };
 
     logLevel = mkOption {
-      type = types.oneOf [
+      type = types.enum [
         "debug"
         "info"
         "warn"
