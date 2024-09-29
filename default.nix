@@ -12,12 +12,17 @@ let
     ./.gitignore
     ./LICENSE
   ]);
+  icon = builtins.fetchurl {
+    url = "https://storage-asset.msi.com/event/vga/2018/dragon_center/images/app_logo.png";
+    sha256 = "sha256:1ndspljr3s6p9rr8qml3xkyxr4xqn07ijrb12ckqzllxkz48fbjw";
+  };
   desktop = pkgs.makeDesktopItem {
+    inherit icon;
     name = "dragon-center";
     desktopName = "Dragon Center for linux";
     comment = "MSI Dragon Center for linux";
     genericName = "Dragon Center for linux";
-    categories = [ "Game" ];
+    categories = [ "Settings" ];
     exec = "dragon-center-launcher";
   };
 

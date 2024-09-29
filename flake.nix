@@ -38,6 +38,8 @@
                 rustc
                 rustfmt
                 cargo
+                pkg-config
+                dbus
               ];
 
               LD_LIBRARY_PATH = "$LD_LIBRARY_PATH:${lib.makeLibraryPath (with pkgs; [
