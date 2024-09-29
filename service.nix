@@ -10,7 +10,7 @@ let
     types
     mkIf
     ;
-  cfg = config.hardware.msi-dragon-center;
+  cfg = config.services.msi-dragon-center;
 
   driverOptions = {
     options = {
@@ -26,7 +26,7 @@ let
   };
 in
 {
-  options.hardware.msi-dragon-center = {
+  options.services.msi-dragon-center = {
     enable = mkEnableOption "Dragon center service";
 
     package = mkOption {
@@ -34,6 +34,17 @@ in
       default = pkgs.dragon-center;
       defaultText = "pkgs.dragon-center";
       description = "The package to use";
+    };
+
+    logLevel = mkOption {
+        type = types.oneOf [
+            "debug"
+            "info"
+            "warn"
+            "error"
+        ];
+        default = "info";
+        description = "The log level";
     };
 
     driver = mkOption {
@@ -52,6 +63,26 @@ in
       kernelModules = [
         "msi-ec"
       ];
+    };
+
+    users.groups.dragon-center = { };
+
+    systemd.services.msi-dragon-center = {
+        enable = true;
+        wantedBy = [ "multi-user.target" ];
+
+        description = "the msi dragon center daemon";
+
+        serviceConfig = {
+            Type = "simple";
+            ExecStart = "${cfg.package}/bin/dragon-center-daemon";
+        };
+
+        environment = {
+            DRAGON_CENTER_NO_FORK = toString 1;
+            DRAGON_CENTER_GID = toString config.users.groups.dragon-center.gid;
+            RUST_LOG = cfg.logLevel;
+        };
     };
 
     environment.systemPackages = [
