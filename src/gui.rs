@@ -1,14 +1,16 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::error::Error;
-use crate::{client::Client, daemon::Config, ec::{BatteryMode, CoolerBoost}};
+use crate::{
+    client::Client,
+    daemon::Config,
+    ec::{BatteryMode, CoolerBoost},
+};
 use slint::{ModelRc, SharedString, VecModel};
+use std::error::Error;
 
 slint::include_modules!();
 
 pub fn start_window() -> Result<(), Box<dyn Error>> {
-
-
     let config = Config::new()?;
     let mut client = Client::new(&config)?;
 
@@ -20,13 +22,15 @@ pub fn start_window() -> Result<(), Box<dyn Error>> {
     ui.set_shift_current_value(client.get_current_shift_mode()?.into());
     ui.set_fan_current_value(client.get_current_fan_mode()?.into());
 
-    let available_shift_modes: Vec<SharedString> = client.get_available_shift_modes()?
+    let available_shift_modes: Vec<SharedString> = client
+        .get_available_shift_modes()?
         .into_iter()
         .map(Into::into)
         .collect();
     ui.set_shift_model(ModelRc::new(VecModel::from(available_shift_modes.clone())));
 
-    let available_fan_modes: Vec<SharedString> = client.get_available_fan_modes()?
+    let available_fan_modes: Vec<SharedString> = client
+        .get_available_fan_modes()?
         .into_iter()
         .map(Into::into)
         .collect();
@@ -44,16 +48,20 @@ pub fn start_window() -> Result<(), Box<dyn Error>> {
     });
 
     let mut moved_client = client.clone();
-    ui.on_request_shift_update(move |shift| match moved_client.set_current_shift_mode(shift.to_string()) {
-        Err(e) => eprintln!("{}", e),
-        _ => {}
+    ui.on_request_shift_update(move |shift| {
+        match moved_client.set_current_shift_mode(shift.to_string()) {
+            Err(e) => eprintln!("{}", e),
+            _ => {}
+        }
     });
 
     let mut moved_client = client.clone();
-    ui.on_request_fan_update(move |fan| match moved_client.set_current_fan_mode(fan.to_string()) {
-        Err(e) => eprintln!("{}", e),
-        _ => {}
-    });
+    ui.on_request_fan_update(
+        move |fan| match moved_client.set_current_fan_mode(fan.to_string()) {
+            Err(e) => eprintln!("{}", e),
+            _ => {}
+        },
+    );
 
     let mut moved_client = client.clone();
     ui.on_request_cooler_boost_update({

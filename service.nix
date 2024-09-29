@@ -37,14 +37,14 @@ in
     };
 
     logLevel = mkOption {
-        type = types.oneOf [
-            "debug"
-            "info"
-            "warn"
-            "error"
-        ];
-        default = "info";
-        description = "The log level";
+      type = types.oneOf [
+        "debug"
+        "info"
+        "warn"
+        "error"
+      ];
+      default = "info";
+      description = "The log level";
     };
 
     driver = mkOption {
@@ -68,21 +68,21 @@ in
     users.groups.dragon-center = { };
 
     systemd.services.msi-dragon-center = {
-        enable = true;
-        wantedBy = [ "multi-user.target" ];
+      enable = true;
+      wantedBy = [ "multi-user.target" ];
 
-        description = "the msi dragon center daemon";
+      description = "the msi dragon center daemon";
 
-        serviceConfig = {
-            Type = "simple";
-            ExecStart = "${cfg.package}/bin/dragon-center-daemon";
-        };
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${cfg.package}/bin/dragon-center-daemon";
+      };
 
-        environment = {
-            DRAGON_CENTER_NO_FORK = toString 1;
-            DRAGON_CENTER_GID = toString config.users.groups.dragon-center.gid;
-            RUST_LOG = cfg.logLevel;
-        };
+      environment = {
+        DRAGON_CENTER_NO_FORK = toString 1;
+        DRAGON_CENTER_GID = toString config.users.groups.dragon-center.gid;
+        RUST_LOG = cfg.logLevel;
+      };
     };
 
     environment.systemPackages = [

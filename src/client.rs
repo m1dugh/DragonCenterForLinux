@@ -1,7 +1,15 @@
-use std::{io::{Error, ErrorKind, Read, Write}, ops::Deref, os::unix::net::UnixStream, rc::Rc};
+use std::{
+    io::{Error, ErrorKind, Read, Write},
+    ops::Deref,
+    os::unix::net::UnixStream,
+    rc::Rc,
+};
 
-use crate::{commands::{Command, CommandResponse}, daemon::Config, ec::{BatteryMode, CoolerBoost}};
-
+use crate::{
+    commands::{Command, CommandResponse},
+    daemon::Config,
+    ec::{BatteryMode, CoolerBoost},
+};
 
 #[derive(Clone)]
 pub struct Client {
@@ -18,7 +26,7 @@ fn read_response(stream: Rc<UnixStream>) -> Result<CommandResponse, Box<dyn std:
         if size < buf.len() {
             break;
         }
-    };
+    }
 
     let command_str = command_builder.string()?;
 
@@ -39,7 +47,10 @@ impl Client {
         })
     }
 
-    pub fn send_command(&mut self, command: Command) -> Result<CommandResponse, Box<dyn std::error::Error>> {
+    pub fn send_command(
+        &mut self,
+        command: Command,
+    ) -> Result<CommandResponse, Box<dyn std::error::Error>> {
         let mut stream = UnixStream::connect(self.config.socket_path.clone())?;
 
         let request = serde_json::to_string(&command)?;
@@ -56,16 +67,25 @@ impl Client {
         match response {
             CommandResponse::Error(e) => Err(Box::new(Error::new(ErrorKind::Other, e))),
             CommandResponse::Battery(val) => Ok(val),
-            _ => Err(Box::new(Error::new(ErrorKind::Other, "Invalid response received"))),
+            _ => Err(Box::new(Error::new(
+                ErrorKind::Other,
+                "Invalid response received",
+            ))),
         }
     }
 
-    pub fn set_battery_mode(&mut self, mode: BatteryMode) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn set_battery_mode(
+        &mut self,
+        mode: BatteryMode,
+    ) -> Result<(), Box<dyn std::error::Error>> {
         let response = self.send_command(Command::WriteBattery(mode))?;
         match response {
             CommandResponse::Success => Ok(()),
             CommandResponse::Error(e) => Err(Box::new(Error::new(ErrorKind::Other, e))),
-            _ => Err(Box::new(Error::new(ErrorKind::Other, "Invalid response received"))),
+            _ => Err(Box::new(Error::new(
+                ErrorKind::Other,
+                "Invalid response received",
+            ))),
         }
     }
 
@@ -74,7 +94,10 @@ impl Client {
         match response {
             CommandResponse::Error(e) => Err(Box::new(Error::new(ErrorKind::Other, e))),
             CommandResponse::AvailableShiftModes(val) => Ok(val),
-            _ => Err(Box::new(Error::new(ErrorKind::Other, "Invalid response received"))),
+            _ => Err(Box::new(Error::new(
+                ErrorKind::Other,
+                "Invalid response received",
+            ))),
         }
     }
 
@@ -83,26 +106,37 @@ impl Client {
         match response {
             CommandResponse::Error(e) => Err(Box::new(Error::new(ErrorKind::Other, e))),
             CommandResponse::AvailableFanModes(val) => Ok(val),
-            _ => Err(Box::new(Error::new(ErrorKind::Other, "Invalid response received"))),
+            _ => Err(Box::new(Error::new(
+                ErrorKind::Other,
+                "Invalid response received",
+            ))),
         }
     }
-
 
     pub fn get_current_shift_mode(&mut self) -> Result<String, Box<dyn std::error::Error>> {
         let response = self.send_command(Command::ReadShiftMode)?;
         match response {
             CommandResponse::Error(e) => Err(Box::new(Error::new(ErrorKind::Other, e))),
             CommandResponse::ShiftMode(val) => Ok(val),
-            _ => Err(Box::new(Error::new(ErrorKind::Other, "Invalid response received"))),
+            _ => Err(Box::new(Error::new(
+                ErrorKind::Other,
+                "Invalid response received",
+            ))),
         }
     }
 
-    pub fn set_current_shift_mode(&mut self, mode: String) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn set_current_shift_mode(
+        &mut self,
+        mode: String,
+    ) -> Result<(), Box<dyn std::error::Error>> {
         let response = self.send_command(Command::WriteShiftMode(mode))?;
         match response {
             CommandResponse::Error(e) => Err(Box::new(Error::new(ErrorKind::Other, e))),
             CommandResponse::Success => Ok(()),
-            _ => Err(Box::new(Error::new(ErrorKind::Other, "Invalid response received"))),
+            _ => Err(Box::new(Error::new(
+                ErrorKind::Other,
+                "Invalid response received",
+            ))),
         }
     }
 
@@ -111,7 +145,10 @@ impl Client {
         match response {
             CommandResponse::Error(e) => Err(Box::new(Error::new(ErrorKind::Other, e))),
             CommandResponse::ShiftMode(val) => Ok(val),
-            _ => Err(Box::new(Error::new(ErrorKind::Other, "Invalid response received"))),
+            _ => Err(Box::new(Error::new(
+                ErrorKind::Other,
+                "Invalid response received",
+            ))),
         }
     }
 
@@ -120,7 +157,10 @@ impl Client {
         match response {
             CommandResponse::Error(e) => Err(Box::new(Error::new(ErrorKind::Other, e))),
             CommandResponse::Success => Ok(()),
-            _ => Err(Box::new(Error::new(ErrorKind::Other, "Invalid response received"))),
+            _ => Err(Box::new(Error::new(
+                ErrorKind::Other,
+                "Invalid response received",
+            ))),
         }
     }
 
@@ -129,16 +169,25 @@ impl Client {
         match response {
             CommandResponse::Error(e) => Err(Box::new(Error::new(ErrorKind::Other, e))),
             CommandResponse::CoolerBoost(val) => Ok(val),
-            _ => Err(Box::new(Error::new(ErrorKind::Other, "Invalid response received"))),
+            _ => Err(Box::new(Error::new(
+                ErrorKind::Other,
+                "Invalid response received",
+            ))),
         }
     }
 
-    pub fn set_cooler_boost(&mut self, mode: CoolerBoost) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn set_cooler_boost(
+        &mut self,
+        mode: CoolerBoost,
+    ) -> Result<(), Box<dyn std::error::Error>> {
         let response = self.send_command(Command::WriteCoolerBoost(mode))?;
         match response {
             CommandResponse::Error(e) => Err(Box::new(Error::new(ErrorKind::Other, e))),
             CommandResponse::Success => Ok(()),
-            _ => Err(Box::new(Error::new(ErrorKind::Other, "Invalid response received"))),
+            _ => Err(Box::new(Error::new(
+                ErrorKind::Other,
+                "Invalid response received",
+            ))),
         }
     }
 }

@@ -1,5 +1,5 @@
 use crate::ec::{BatteryMode, CoolerBoost};
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 pub enum Command {

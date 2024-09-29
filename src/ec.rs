@@ -1,6 +1,6 @@
+use serde::{Deserialize, Serialize};
 use std::fs::{self, read_to_string};
 use std::io::{Error, ErrorKind, Read, Result, Write};
-use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize)]
 pub enum BatteryMode {

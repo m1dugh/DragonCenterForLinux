@@ -1,12 +1,12 @@
 use daemonize::Daemonize;
+use log::{debug, error, info};
+use std::fs::{remove_file, File, Permissions};
 use std::io::{ErrorKind, Read, Write};
 use std::ops::Deref;
-use std::rc::Rc;
-use std::{env, fs, thread};
-use std::fs::{remove_file, File, Permissions};
 use std::os::unix::fs::{chown, PermissionsExt};
 use std::os::unix::net::{UnixListener, UnixStream};
-use log::{debug, error, info};
+use std::rc::Rc;
+use std::{env, fs, thread};
 
 use crate::commands::{Command, CommandResponse};
 use crate::ec;
@@ -24,20 +24,18 @@ pub struct Config {
 fn find_var(suffix: &str) -> Option<String> {
     let name: String = format!("DRAGON_CENTER_{}", suffix);
 
-    return env::vars().
-        find(|(key, _)| *key == name).
-        map(|(_, value)| value)
+    return env::vars()
+        .find(|(key, _)| *key == name)
+        .map(|(_, value)| value);
 }
 
 impl Config {
     pub fn new() -> Result<Self, Box<dyn std::error::Error>> {
-
         let uid = find_var("UID").unwrap_or("0".into()).parse::<u32>()?;
         let gid = find_var("GID").unwrap_or("0".into()).parse::<u32>()?;
 
         Ok(Config {
-            socket_path: find_var("SOCKET_PATH").
-                unwrap_or("/run/dragon-center.sock".into()),
+            socket_path: find_var("SOCKET_PATH").unwrap_or("/run/dragon-center.sock".into()),
             uid,
             gid,
             stdout: find_var("STDOUT"),
@@ -57,7 +55,7 @@ fn read_request(stream: Rc<UnixStream>) -> Result<Command, Box<dyn std::error::E
         if size < buf.len() {
             break;
         }
-    };
+    }
 
     let command_str = command_builder.string()?;
 
@@ -118,7 +116,10 @@ fn handle_command(command: Command) -> CommandResponse {
     }
 }
 
-fn send_response(stream: Rc<UnixStream>, response: CommandResponse) -> Result<(), Box<dyn std::error::Error>> {
+fn send_response(
+    stream: Rc<UnixStream>,
+    response: CommandResponse,
+) -> Result<(), Box<dyn std::error::Error>> {
     let mut stream = stream.deref();
     let response = serde_json::to_string(&response)?;
     debug!("Sending response '{}'", response);
@@ -127,14 +128,13 @@ fn send_response(stream: Rc<UnixStream>, response: CommandResponse) -> Result<()
 }
 
 fn handle_client(stream: UnixStream) {
-
     let stream = Rc::new(stream);
 
     let command = match read_request(stream.clone()) {
         Err(e) => {
             error!("{}", e);
             return;
-        },
+        }
         Ok(val) => val,
     };
 
@@ -147,7 +147,6 @@ fn handle_client(stream: UnixStream) {
 }
 
 fn start_listener(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
-
     if let Err(e) = remove_file(config.socket_path.clone()) {
         if e.kind() != ErrorKind::NotFound {
             return Err(Box::new(e));
@@ -155,39 +154,39 @@ fn start_listener(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
     }
     let listener = UnixListener::bind(config.socket_path.clone())?;
 
-    chown(config.socket_path.clone(), Some(config.uid), Some(config.gid))?;
+    chown(
+        config.socket_path.clone(),
+        Some(config.uid),
+        Some(config.gid),
+    )?;
     fs::set_permissions(config.socket_path.clone(), Permissions::from_mode(0o770))?;
 
     for stream in listener.incoming() {
         match stream {
             Ok(stream) => {
                 thread::spawn(move || handle_client(stream));
-            },
+            }
             Err(err) => {
                 error!("Error: {}", err);
             }
         }
     }
 
-
     Ok(())
 }
 
 pub fn start_daemon(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
-
     env_logger::init();
-    if ! config.nofork {
-
-        let mut daemonize = Daemonize::new()
-            .pid_file("/tmp/dragon-center.pid");
+    if !config.nofork {
+        let mut daemonize = Daemonize::new().pid_file("/tmp/dragon-center.pid");
 
         if let Some(filename) = &config.stdout {
-            let file = File::create(filename)?; 
+            let file = File::create(filename)?;
             daemonize = daemonize.stdout(file);
         }
 
         if let Some(filename) = &config.stderr {
-            let file = File::create(filename)?; 
+            let file = File::create(filename)?;
             daemonize = daemonize.stderr(file);
         }
 
@@ -197,7 +196,6 @@ pub fn start_daemon(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
     } else {
         info!("Starting undaemonized instance");
     }
-
 
     start_listener(&config)?;
 
