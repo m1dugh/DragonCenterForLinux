@@ -1,6 +1,8 @@
 use std::fs::{self, read_to_string};
 use std::io::{Error, ErrorKind, Read, Result, Write};
+use serde::{Serialize, Deserialize};
 
+#[derive(Serialize, Deserialize)]
 pub enum BatteryMode {
     Min,
     Medium,
@@ -28,6 +30,7 @@ impl From<&str> for BatteryMode {
     }
 }
 
+#[derive(Serialize, Deserialize)]
 pub enum CoolerBoost {
     On,
     Off,
