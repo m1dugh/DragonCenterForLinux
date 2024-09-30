@@ -65,7 +65,7 @@ in
       ];
     };
 
-    users.groups.dragon-center = { };
+    users.groups.dragon-center.gid = lib.mkDefault 990;
 
     systemd.services.msi-dragon-center = {
       enable = true;
