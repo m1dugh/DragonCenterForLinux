@@ -69,7 +69,7 @@ impl Client {
             CommandResponse::Battery(val) => Ok(val),
             _ => Err(Box::new(Error::new(
                 ErrorKind::Other,
-                "Invalid response received",
+                "Invalid response received for get battery mode.",
             ))),
         }
     }
@@ -84,7 +84,7 @@ impl Client {
             CommandResponse::Error(e) => Err(Box::new(Error::new(ErrorKind::Other, e))),
             _ => Err(Box::new(Error::new(
                 ErrorKind::Other,
-                "Invalid response received",
+                "Invalid response received for set battery mode",
             ))),
         }
     }
@@ -96,7 +96,7 @@ impl Client {
             CommandResponse::AvailableShiftModes(val) => Ok(val),
             _ => Err(Box::new(Error::new(
                 ErrorKind::Other,
-                "Invalid response received",
+                "Invalid response received for get available shift modes",
             ))),
         }
     }
@@ -108,7 +108,7 @@ impl Client {
             CommandResponse::AvailableFanModes(val) => Ok(val),
             _ => Err(Box::new(Error::new(
                 ErrorKind::Other,
-                "Invalid response received",
+                "Invalid response received for get available fan modes",
             ))),
         }
     }
@@ -120,7 +120,7 @@ impl Client {
             CommandResponse::ShiftMode(val) => Ok(val),
             _ => Err(Box::new(Error::new(
                 ErrorKind::Other,
-                "Invalid response received",
+                "Invalid response received for get current shift mode",
             ))),
         }
     }
@@ -135,7 +135,7 @@ impl Client {
             CommandResponse::Success => Ok(()),
             _ => Err(Box::new(Error::new(
                 ErrorKind::Other,
-                "Invalid response received",
+                "Invalid response received for set current shift mode",
             ))),
         }
     }
@@ -147,7 +147,7 @@ impl Client {
             CommandResponse::ShiftMode(val) => Ok(val),
             _ => Err(Box::new(Error::new(
                 ErrorKind::Other,
-                "Invalid response received",
+                "Invalid response received for get current fan mode",
             ))),
         }
     }
@@ -159,7 +159,7 @@ impl Client {
             CommandResponse::Success => Ok(()),
             _ => Err(Box::new(Error::new(
                 ErrorKind::Other,
-                "Invalid response received",
+                "Invalid response received for set current fan mode",
             ))),
         }
     }
@@ -171,7 +171,7 @@ impl Client {
             CommandResponse::CoolerBoost(val) => Ok(val),
             _ => Err(Box::new(Error::new(
                 ErrorKind::Other,
-                "Invalid response received",
+                "Invalid response for get cooler boost",
             ))),
         }
     }
@@ -186,7 +186,7 @@ impl Client {
             CommandResponse::Success => Ok(()),
             _ => Err(Box::new(Error::new(
                 ErrorKind::Other,
-                "Invalid response received",
+                "Invalid response received for set cooler boost",
             ))),
         }
     }
