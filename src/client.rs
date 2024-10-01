@@ -144,7 +144,7 @@ impl Client {
         let response = self.send_command(Command::ReadFanMode)?;
         match response {
             CommandResponse::Error(e) => Err(Box::new(Error::new(ErrorKind::Other, e))),
-            CommandResponse::ShiftMode(val) => Ok(val),
+            CommandResponse::FanMode(val) => Ok(val),
             _ => Err(Box::new(Error::new(
                 ErrorKind::Other,
                 "Invalid response received for get current fan mode",
