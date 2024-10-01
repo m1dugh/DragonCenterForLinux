@@ -22,7 +22,7 @@ impl ToString for BatteryMode {
 
 impl From<&str> for BatteryMode {
     fn from(val: &str) -> BatteryMode {
-        match val {
+        match val.trim() {
             "min" => BatteryMode::Min,
             "medium" => BatteryMode::Medium,
             "max" | _ => BatteryMode::Max,
@@ -38,7 +38,7 @@ pub enum CoolerBoost {
 
 impl From<&str> for CoolerBoost {
     fn from(val: &str) -> CoolerBoost {
-        match val {
+        match val.trim() {
             "on" => CoolerBoost::On,
             "off" | _ => CoolerBoost::Off,
         }
