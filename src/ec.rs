@@ -2,6 +2,10 @@ use serde::{Deserialize, Serialize};
 use std::fs::{self, read_to_string};
 use std::io::{Error, ErrorKind, Read, Result, Write};
 
+fn sanitize_string(str: &str) -> &str {
+    str.trim_matches(|c: char| c.is_whitespace() || c == char::from(0))
+}
+
 #[derive(Serialize, Deserialize)]
 pub enum BatteryMode {
     Min,
@@ -22,7 +26,7 @@ impl ToString for BatteryMode {
 
 impl From<&str> for BatteryMode {
     fn from(val: &str) -> BatteryMode {
-        match val.trim() {
+        match sanitize_string(val) {
             "min" => BatteryMode::Min,
             "medium" => BatteryMode::Medium,
             "max" | _ => BatteryMode::Max,
@@ -38,7 +42,7 @@ pub enum CoolerBoost {
 
 impl From<&str> for CoolerBoost {
     fn from(val: &str) -> CoolerBoost {
-        match val.trim() {
+        match sanitize_string(val) {
             "on" => CoolerBoost::On,
             "off" | _ => CoolerBoost::Off,
         }
@@ -98,7 +102,7 @@ pub fn get_available_shift_modes() -> Result<Vec<String>> {
     Ok(
         read_to_string("/sys/devices/platform/msi-ec/available_shift_modes")?
             .lines()
-            .map(String::from)
+            .map(|s| String::from(sanitize_string(s)))
             .collect(),
     )
 }
@@ -107,7 +111,7 @@ pub fn get_current_shift_mode() -> Result<String> {
     match read_to_string("/sys/devices/platform/msi-ec/shift_mode")?
         .lines()
         .take(1)
-        .map(String::from)
+        .map(|s| String::from(sanitize_string(s)))
         .nth(0)
     {
         Some(val) => Ok(val),
@@ -130,7 +134,7 @@ pub fn get_available_fan_modes() -> Result<Vec<String>> {
     Ok(
         read_to_string("/sys/devices/platform/msi-ec/available_fan_modes")?
             .lines()
-            .map(String::from)
+            .map(|s| String::from(sanitize_string(s)))
             .collect(),
     )
 }
@@ -139,7 +143,7 @@ pub fn get_current_fan_mode() -> Result<String> {
     match read_to_string("/sys/devices/platform/msi-ec/fan_mode")?
         .lines()
         .take(1)
-        .map(String::from)
+        .map(|s| String::from(sanitize_string(s)))
         .nth(0)
     {
         Some(val) => Ok(val),

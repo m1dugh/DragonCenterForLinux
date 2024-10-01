@@ -1,5 +1,8 @@
 # build
 /target
 
+# Test setup
+/dragon-center-daemon
+
 # Nix outputs
 /result
