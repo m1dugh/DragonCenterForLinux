@@ -1,0 +1,15 @@
+[package]
+name = "dragon-center-service"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+dragon-center-api = { version = "0.1.0", path = "../../crates/dragon-center-api" }
+tokio.workspace = true
+env_logger.workspace = true
+log.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+clap.workspace = true
