@@ -33,20 +33,38 @@
         devShells = {
           default = self.devShells.${system}.wayland;
           wayland =
-            pkgs.mkShell {
-              nativeBuildInputs = with pkgs; [
-                rustc
-                rustfmt
-                cargo
+            let
+              libraries = with pkgs;[
+                webkitgtk_4_1
+                gtk3
+                cairo
+                gdk-pixbuf
+                glib
+                dbus
+                openssl_3
+                librsvg
+              ];
+              packages = with pkgs; [
+                curl
+                wget
                 pkg-config
                 dbus
+                openssl_3
+                glib
+                gtk3
+                libsoup
+                webkitgtk_4_1
+                librsvg
+                cargo
+                cargo-tauri
+                pkg-config
               ];
+            in
+            pkgs.mkShell {
+              buildInputs = packages;
 
-              LD_LIBRARY_PATH = "$LD_LIBRARY_PATH:${lib.makeLibraryPath (with pkgs; [
-                wayland
-                libxkbcommon
-                fontconfig
-              ])}";
+              LD_LIBRARY_PATH = "$LD_LIBRARY_PATH:${lib.makeLibraryPath libraries}";
+              PKG_CONFIG_PATH = lib.strings.concatMapStringsSep ":" (pkg: "${pkg.dev}/lib/pkgconfig/") libraries;
 
               # Environment variable to allow
               # Running on buggy nvidia cards
