@@ -2,7 +2,7 @@
   description = "The MSI Dragon Center 2 utility for Linux";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     systems.url = "github:nix-systems/default-linux";
 
     flake-utils = {
@@ -61,10 +61,8 @@
               ];
             in
             pkgs.mkShell {
-              buildInputs = packages;
-
-              LD_LIBRARY_PATH = "$LD_LIBRARY_PATH:${lib.makeLibraryPath libraries}";
-              PKG_CONFIG_PATH = lib.strings.concatMapStringsSep ":" (pkg: "${pkg.dev}/lib/pkgconfig/") libraries;
+                buildInputs = libraries;
+                nativeBuildInputs = packages;
 
               # Environment variable to allow
               # Running on buggy nvidia cards
