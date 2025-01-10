@@ -4,4 +4,4 @@ resolver = "2"
 
 members = [
     "dragon-center-gui"
-]
+, "dragon-center-lib"]

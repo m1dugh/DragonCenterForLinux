@@ -1,7 +1,13 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+
+use dragon_center_lib::{self, get_cooler_boost};
+
 #[tauri::command]
 fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+    match get_cooler_boost() {
+        Err(e) => format!("Error: {e}"),
+        Ok(v) => format!("Cooler boost mode {}", v.to_string()),
+    }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

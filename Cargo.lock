@@ -651,11 +651,19 @@ dependencies = [
 name = "dragon-center-gui"
 version = "0.1.0"
 dependencies = [
+ "dragon-center-lib",
  "serde",
  "serde_json",
  "tauri",
  "tauri-build",
  "tauri-plugin-shell",
+]
+
+[[package]]
+name = "dragon-center-lib"
+version = "0.1.0"
+dependencies = [
+ "serde",
 ]
 
 [[package]]
