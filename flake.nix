@@ -14,7 +14,6 @@
   outputs =
     { flake-utils
     , nixpkgs
-    , self
     , ...
     }:
     flake-utils.lib.eachDefaultSystem
@@ -28,16 +27,6 @@
           inherit pkgs lib;
         };
 
-      in
-      {
-        packages = rec {
-          default = dragon-center;
-          dragon-center = pkgs.rustPlatform.buildRustPackage {
-            pname = "dragon-center";
-            version = "0.0.1";
-            cargoLock.lockFile = ./Cargo.lock;
-            src = pkgs.lib.cleanSource ./.;
-
             buildInputs = with pkgs; [
               webkitgtk_4_1
               gtk3
@@ -50,8 +39,6 @@
             ];
 
             nativeBuildInputs = with pkgs; [
-              curl
-              wget
               pkg-config
               dbus
               openssl_3
@@ -64,6 +51,30 @@
               cargo-tauri
               pkg-config
             ];
+      in
+      {
+        devShells = {
+            default = pkgs.mkShell {
+              XDG_DATA_DIRS = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}";
+              inherit nativeBuildInputs buildInputs;
+            };
+        };
+        packages = rec {
+          default = dragon-center;
+          dragon-center = pkgs.writeShellScriptBin "dragon-center" ''
+              XDG_DATA_DIRS="${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS";
+              ${pkgs.polkit}/bin/pkexec ${dragon-center-unwrapped} "$@"
+          '';
+          dragon-center-unwrapped = pkgs.rustPlatform.buildRustPackage {
+            pname = "dragon-center";
+            version = "0.0.1";
+            cargoLock.lockFile = ./Cargo.lock;
+            src = pkgs.lib.cleanSource ./.;
+
+            inherit buildInputs nativeBuildInputs;
+
+            doCheck = false;
+
           };
         };
 

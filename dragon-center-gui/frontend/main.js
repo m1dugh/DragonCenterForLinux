@@ -1,18 +1,59 @@
 const { invoke } = window.__TAURI__.core;
 
-let greetInputEl;
-let greetMsgEl;
+let batterySelect = undefined;
+let currentPane = undefined;
 
-async function greet() {
-  // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-  greetMsgEl.textContent = await invoke("greet", { name: greetInputEl.value });
+async function loadBatteryMode() {
+    if (!batterySelect)
+        return
+    const level = await invoke("get_battery_level")
+
+    const children = []
+    for (const lvlName of ["min", "medium", "max"]) {
+        const child = document.createElement("option")
+        child.innerText = lvlName
+        if (lvlName === level)
+            child.selected = true
+        children.push(child)
+    }
+
+    batterySelect.replaceChildren(...children)
+}
+
+async function setBatteryMode() {
+    if (!batterySelect)
+        return
+    const level = batterySelect.value
+    await invoke("set_battery_level", {level})
+}
+
+function setupBatteryPane() {
+    batterySelect = document.querySelector("#battery-level")
+    loadBatteryMode()
+    batterySelect.onchange = setBatteryMode
+}
+
+function setupPaneContainer() {
+    const radios =
+        document.querySelectorAll("#pane-chooser > .choice input[type=radio]")
+
+    const panes = {}
+    for (const pane of document.querySelectorAll(".pane")) {
+        panes[pane.id] = pane
+    }
+    currentPane = panes["battery-pane"]
+
+    for (const radio of radios) {
+        radio.addEventListener('change', (event) => {
+            currentPane.classList.add("hidden")
+            const pane = panes[`${event.target.id}-pane`]
+            currentPane = pane
+            pane.classList.remove("hidden")
+        })
+    }
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  greetInputEl = document.querySelector("#greet-input");
-  greetMsgEl = document.querySelector("#greet-msg");
-  document.querySelector("#greet-form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    greet();
-  });
+    setupPaneContainer()
+    setupBatteryPane()
 });
