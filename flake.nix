@@ -60,20 +60,66 @@
             };
         };
         packages = rec {
+
           default = dragon-center;
-          dragon-center = pkgs.writeShellScriptBin "dragon-center" ''
+
+          dragon-center = 
+          let
+            script = pkgs.writeShellScriptBin "dragon-center" ''
               XDG_DATA_DIRS="${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS";
-              ${pkgs.polkit}/bin/pkexec ${dragon-center-unwrapped} "$@"
+              pkexec env DISPLAY=$DISPLAY WAYLAND_DISPLAY=$WAYLAND_DISPLAY XDG_SESSION_TYPE=$XDG_SESSION_TYPE XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR XDG_DATA_DIRS=$XDG_DATA_DIRS ${lib.getExe dragon-center-unwrapped}
           '';
-          dragon-center-unwrapped = pkgs.rustPlatform.buildRustPackage {
+
+            desktopItem = pkgs.makeDesktopItem {
+                name = "dragon-center-gui";
+                desktopName = "MSI Dragon center for linux";
+                exec = lib.getExe script;
+            };
+
+          in pkgs.stdenv.mkDerivation {
+
+            name = "dragon-center";
+
+            dontUnpack = true;
+
+            nativeBuildInputs = with pkgs; [
+                copyDesktopItems
+            ];
+
+            desktopItems = [ desktopItem ];
+
+            postInstall = ''
+                mkdir -p $out/bin/
+                install -m 0755 ${lib.getExe script} $out/bin/dragon-center
+            '';
+          };
+
+          dragon-center-unwrapped = 
+          let
+            fs = lib.fileset;
+            sourceFiles = fs.difference ./. (fs.unions [
+                ./flake.nix
+                ./flake.lock
+                (fs.maybeMissing ./.gitignore)
+            ]);
+          in pkgs.rustPlatform.buildRustPackage {
             pname = "dragon-center";
             version = "0.0.1";
             cargoLock.lockFile = ./Cargo.lock;
-            src = pkgs.lib.cleanSource ./.;
+
 
             inherit buildInputs nativeBuildInputs;
 
+            src = fs.toSource {
+                root = ./.;
+                fileset = sourceFiles;
+            };
+
             doCheck = false;
+
+            meta = {
+                mainProgram = "dragon-center-gui";
+            };
 
           };
         };
