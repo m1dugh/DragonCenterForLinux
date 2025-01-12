@@ -1,7 +1,9 @@
 const { invoke } = window.__TAURI__.core;
 
 let batterySelect = undefined;
+let shiftSelect = undefined;
 let currentPane = undefined;
+let coolerBoost = undefined;
 
 async function loadBatteryMode() {
     if (!batterySelect)
@@ -20,6 +22,39 @@ async function loadBatteryMode() {
     batterySelect.replaceChildren(...children)
 }
 
+async function loadShiftModes() {
+    if (!shiftSelect)
+        return
+    const shifts = await invoke("get_available_shift_modes")
+    const currentShift = await invoke("get_shift_mode")
+
+    const children = []
+    for (const shift of shifts) {
+        const child = document.createElement("option")
+        child.innerText = shift
+        if (shift === currentShift)
+            child.selected = true
+        children.push(child)
+    }
+
+    shiftSelect.replaceChildren(...children)
+}
+
+async function loadCoolerBoost() {
+    if (!coolerBoost)
+        return
+
+    const value = await invoke("get_cooler_boost")
+    coolerBoost.checked = value
+}
+
+async function setCoolerBoost() {
+    if (!coolerBoost)
+        return
+
+    const value = await invoke("set_cooler_boost", {boost: coolerBoost.checked})
+}
+
 async function setBatteryMode() {
     if (!batterySelect)
         return
@@ -27,10 +62,26 @@ async function setBatteryMode() {
     await invoke("set_battery_level", {level})
 }
 
+async function setShiftMode() {
+    if (!shiftSelect)
+        return
+    const mode = shiftSelect.value
+    await invoke("set_shift_mode", {mode})
+}
+
 function setupBatteryPane() {
     batterySelect = document.querySelector("#battery-level")
     loadBatteryMode()
     batterySelect.onchange = setBatteryMode
+}
+
+function setupShiftPane() {
+    shiftSelect = document.querySelector("#shift-mode")
+    coolerBoost = document.querySelector("#cooler-boost")
+    loadShiftModes()
+    loadCoolerBoost()
+    shiftSelect.onchange = setShiftMode
+    coolerBoost.onchange = setCoolerBoost
 }
 
 function setupPaneContainer() {
@@ -56,4 +107,5 @@ function setupPaneContainer() {
 window.addEventListener("DOMContentLoaded", () => {
     setupPaneContainer()
     setupBatteryPane()
+    setupShiftPane()
 });
