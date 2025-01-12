@@ -7,61 +7,18 @@ This software is intended to replace the MSI dragon center. It is based on the
 
 ## Installation
 
-### Nix
+### Nix package manager
 
-This package comes with a Nix flake and can be installed like this:
-In your flake:
-```flake.nix
-    # ...
-    inputs.dragon-center.url = "github:m1dugh/DragonCenterForLinux";
-
-    # ...
-
-    outputs =
-    {
-        # ...
-        , dragon-center
-        # ...
-    }: {
-        # ...
-    }
+To install the package using `nix`, run the following command:
+```bash
+nix profile install github:m1dugh/DragonCenterForLinux#dragon-center
 ```
 
-In your configuration:
+## Running
 
-```configuration.nix
-{ system
-, dragon-center
-, ...
-}:
-{
-    environment.systemPackages = [
-
-        # ...
-
-        dragon-center.packages.${system}.default
-
-        # ...
-    ];
-}
+The project can be ran using the command.
+```
+dragon-center
 ```
 
-for the package, or
-```configuration.nix
-{ system
-, dragon-center
-, ...
-}:
-{
-    imports = [
-        dragon-center.nixosModules.default
-    ];
-
-    hardware.msi.dragon-center = {
-        enable = true;
-        driver.enable = true;
-    };
-}
-```
-
-Which adds the `msi-ec` driver to your config.
+which requires the use of polkit in order to be ran as root.

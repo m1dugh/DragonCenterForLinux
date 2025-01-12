@@ -100,6 +100,9 @@
             sourceFiles = fs.difference ./. (fs.unions [
                 ./flake.nix
                 ./flake.lock
+                ./README.md
+                ./CONTRIBUTING.md
+                ./LICENSE
                 (fs.maybeMissing ./.gitignore)
             ]);
           in pkgs.rustPlatform.buildRustPackage {
